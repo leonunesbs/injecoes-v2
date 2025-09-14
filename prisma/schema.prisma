@@ -1,0 +1,292 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// ==============================================
+// AUTH MODELS (NextAuth.js)
+// ==============================================
+
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? // @db.Text
+    access_token             String? // @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? // @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id            String         @id @default(cuid())
+    name          String?
+    email         String?        @unique
+    emailVerified DateTime?
+    image         String?
+    accounts      Account[]
+    sessions      Session[]
+    patients      Patient[]
+    consultations Consultation[]
+    injections    Injection[]
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+// ==============================================
+// INJECTION SYSTEM MODELS v2.0
+// ==============================================
+
+// Tipos de indicações médicas
+model Indication {
+    id          String   @id @default(cuid())
+    code        String   @unique // RD/EMD, RD/HV, DMRI, OV, MNVSR
+    name        String // Nome completo da indicação
+    description String? // Descrição detalhada
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    patients Patient[]
+
+    @@index([code])
+    @@index([isActive])
+}
+
+// Medicamentos disponíveis
+model Medication {
+    id              String   @id @default(cuid())
+    code            String   @unique // LUCENTIS, AVASTIN, EYLIA
+    name            String // Nome comercial
+    activeSubstance String // Substância ativa
+    isActive        Boolean  @default(true)
+    createdAt       DateTime @default(now())
+    updatedAt       DateTime @updatedAt
+
+    patients Patient[]
+
+    @@index([code])
+    @@index([isActive])
+}
+
+// Classificação Swalis
+model SwalisClassification {
+    id          String   @id @default(cuid())
+    code        String   @unique // A1, A2, B, C, D
+    name        String // Nome da classificação
+    description String // Descrição detalhada
+    priority    Int // Prioridade (1 = mais urgente)
+    isActive    Boolean  @default(true)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    patients Patient[]
+
+    @@index([code])
+    @@index([priority])
+    @@index([isActive])
+}
+
+// Pacientes
+model Patient {
+    id        String    @id @default(cuid())
+    refId     String    @unique // ID de referência do paciente
+    name      String
+    birthDate DateTime?
+    phone     String?
+    email     String?
+
+    // Relacionamentos com indicação, medicação e classificação
+    indicationId String
+    indication   Indication @relation(fields: [indicationId], references: [id])
+
+    medicationId String
+    medication   Medication @relation(fields: [medicationId], references: [id])
+
+    swalisId String
+    swalis   SwalisClassification @relation(fields: [swalisId], references: [id])
+
+    // Campos específicos do sistema
+    indicationOther String? // Para "Outros" na indicação
+    medicationOther String? // Para "Outro" na medicação
+
+    // Sistema de saldo de injeções (recarregável a cada consulta)
+    balanceOD         Int @default(0) // Saldo atual de injeções OD
+    balanceOS         Int @default(0) // Saldo atual de injeções OS
+    totalPrescribedOD Int @default(0) // Total prescrito OD (histórico)
+    totalPrescribedOS Int @default(0) // Total prescrito OS (histórico)
+    totalAppliedOD    Int @default(0) // Total aplicado OD (histórico)
+    totalAppliedOS    Int @default(0) // Total aplicado OS (histórico)
+
+    // Configurações
+    startWithOD Boolean @default(true) // Começar com olho direito
+    isActive    Boolean @default(true)
+
+    // Auditoria
+    createdById String
+    createdBy   User     @relation(fields: [createdById], references: [id])
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    // Relacionamentos
+    consultations Consultation[]
+    injections    Injection[]
+
+    @@index([refId])
+    @@index([name])
+    @@index([isActive])
+    @@index([createdById])
+    @@index([createdAt])
+}
+
+// Consultas médicas
+model Consultation {
+    id        String  @id @default(cuid())
+    patientId String
+    patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+    // Data da consulta
+    consultationDate DateTime
+
+    // Dados da consulta
+    notes     String? // Observações da consulta
+    nextVisit DateTime? // Próxima consulta agendada
+
+    // Status da consulta
+    status ConsultationStatus @default(COMPLETED)
+
+    // Auditoria
+    doctorId  String
+    doctor    User     @relation(fields: [doctorId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Relacionamentos
+    prescriptions Prescription[]
+
+    @@index([patientId])
+    @@index([consultationDate])
+    @@index([status])
+    @@index([doctorId])
+}
+
+// Prescrições de injeções por consulta
+model Prescription {
+    id             String       @id @default(cuid())
+    consultationId String
+    consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+
+    // Quantidade prescrita
+    prescribedOD Int @default(0) // Injeções prescritas para OD
+    prescribedOS Int @default(0) // Injeções prescritas para OS
+
+    // Observações específicas da prescrição
+    notes String? // Observações da prescrição
+
+    // Status da prescrição
+    status PrescriptionStatus @default(ACTIVE)
+
+    // Auditoria
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([consultationId])
+    @@index([status])
+}
+
+// Injeções aplicadas
+model Injection {
+    id        String  @id @default(cuid())
+    patientId String
+    patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+    // Data e horário
+    scheduledDate DateTime // Data agendada
+    appliedDate   DateTime? // Data de aplicação real
+    appliedAt     DateTime? // Horário exato da aplicação
+
+    // Injeções por olho
+    injectionOD Int @default(0) // Quantidade de injeções no olho direito
+    injectionOS Int @default(0) // Quantidade de injeções no olho esquerdo
+
+    // Status da injeção
+    status InjectionStatus @default(SCHEDULED)
+
+    // Observações
+    observations String? // Observações gerais
+    sideEffects  String? // Efeitos colaterais observados
+
+    // Auditoria
+    appliedById String?
+    appliedBy   User?    @relation(fields: [appliedById], references: [id])
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    @@index([patientId])
+    @@index([scheduledDate])
+    @@index([status])
+    @@index([appliedDate])
+}
+
+// Status das consultas
+enum ConsultationStatus {
+    SCHEDULED // Agendada
+    COMPLETED // Realizada
+    CANCELLED // Cancelada
+    NO_SHOW // Paciente não compareceu
+}
+
+// Status das prescrições
+enum PrescriptionStatus {
+    ACTIVE // Ativa (saldo disponível)
+    COMPLETED // Completa (todas as injeções aplicadas)
+    CANCELLED // Cancelada
+    EXPIRED // Expirada
+}
+
+// Status das injeções
+enum InjectionStatus {
+    SCHEDULED // Agendada
+    APPLIED // Aplicada
+    CANCELLED // Cancelada
+    RESCHEDULED // Reagendada
+    MISSED // Perdida
+}
+
+// ==============================================
+// DASHBOARD OPTIMIZATION INDEXES
+// ==============================================
+
+// Índices compostos para otimização de consultas do dashboard
+// Estes serão adicionados automaticamente pelo Prisma baseado nos relacionamentos
