@@ -33,17 +33,50 @@ Documentação da arquitetura e design do sistema de injeções oftalmológicas.
 Frontend → tRPC → Prisma → PostgreSQL
 ```
 
-### 2. Prescrição de Injeções
+### 2. Configurações do Sistema
+
+```
+/settings → Layout com Tabs → Subrotas Específicas
+```
+
+**Estrutura de Rotas de Configurações:**
+
+- `/settings` - Página principal (redireciona para indications)
+- `/settings/indications` - Gestão de indicações médicas
+- `/settings/medications` - Gestão de medicamentos
+- `/settings/swalis` - Gestão de classificação Swalis
+
+### 3. Prescrição de Injeções
 
 ```
 Consulta → Prescrição → Atualização de Saldo
 ```
 
-### 3. Aplicação de Injeções
+### 4. Aplicação de Injeções
 
 ```
 Agendamento → Aplicação → Decremento de Saldo
 ```
+
+## 🎯 Estrutura de Navegação
+
+### Layout de Configurações
+
+O sistema utiliza um layout compartilhado para todas as páginas de configurações:
+
+- **Header**: Título e descrição das configurações
+- **Tabs**: Navegação entre seções (indicações, medicamentos, swalis)
+- **Content**: Área dinâmica que renderiza a página específica
+
+### Padrão de Páginas
+
+Cada página de configuração segue o mesmo padrão:
+
+1. **Cabeçalho**: Título e descrição da seção
+2. **Tabela**: Para visualização e edição dos dados existentes (quando há dados)
+3. **Formulário**: Para criação de novos registros
+4. **Validação**: Feedback em tempo real
+5. **Notificações**: Toast para ações do usuário
 
 ## 📊 Padrões de Dados
 

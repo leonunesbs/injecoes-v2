@@ -64,6 +64,12 @@ src/
 ├── app/                    # App Router do Next.js
 │   ├── _components/        # Componentes reutilizáveis
 │   ├── api/               # API Routes
+│   ├── settings/          # Páginas de configurações
+│   │   ├── layout.tsx     # Layout com tabs de navegação
+│   │   ├── page.tsx       # Redirecionamento padrão
+│   │   ├── indications/   # Gestão de indicações médicas
+│   │   ├── medications/   # Gestão de medicamentos
+│   │   └── swalis/        # Gestão de classificação Swalis
 │   └── page.tsx           # Página principal
 ├── server/                # Lógica do servidor
 │   ├── api/               # tRPC routers
@@ -75,6 +81,21 @@ prisma/
 ├── schema.prisma          # Schema do banco de dados
 └── README.md             # Documentação do schema
 ```
+
+### Estrutura de Rotas
+
+O sistema utiliza uma estrutura de rotas simples e intuitiva:
+
+- **`/settings`** - Página principal de configurações (redireciona para `/settings/indications`)
+- **`/settings/indications`** - Gestão de indicações médicas
+- **`/settings/medications`** - Gestão de medicamentos
+- **`/settings/swalis`** - Gestão de classificação Swalis
+
+Cada seção de configurações possui:
+- Formulário para criação de novos registros
+- Tabela para visualização e edição dos dados existentes
+- Validação em tempo real
+- Feedback visual para ações do usuário
 
 ### Modelos de Dados
 

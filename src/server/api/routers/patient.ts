@@ -182,7 +182,7 @@ export const patientRouter = createTRPCRouter({
       by: ["swalisId"],
       where: { isActive: true },
       _count: { id: true },
-      orderBy: { swalis: { priority: "asc" } },
+      orderBy: { swalisId: "asc" },
     });
 
     const swalisData = await ctx.db.swalisClassification.findMany({
@@ -195,7 +195,7 @@ export const patientRouter = createTRPCRouter({
       return {
         swalis: swalis?.name || "Desconhecido",
         priority: swalis?.priority || 999,
-        count: stat._count.id,
+        count: stat._count.id ?? 0,
       };
     });
   }),

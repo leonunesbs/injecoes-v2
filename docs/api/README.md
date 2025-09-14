@@ -25,9 +25,23 @@ O sistema utiliza **tRPC** para comunicação entre frontend e backend, garantin
 ### Routers Principais
 
 - **Patient Router** - Operações com pacientes
-- **Consultation Router** - Operações com consultas
+- **Settings Router** - Configurações do sistema (indicações, medicamentos, Swalis)
 - **Injection Router** - Operações com injeções
 - **Report Router** - Relatórios e dashboards
+
+### Rotas de Configurações
+
+O sistema possui rotas dedicadas para configurações administrativas:
+
+- **`/settings/indications`** - Gestão de indicações médicas
+- **`/settings/medications`** - Gestão de medicamentos
+- **`/settings/swalis`** - Gestão de classificação Swalis
+
+Cada rota de configuração oferece:
+- Interface para criação de novos registros
+- Tabela para visualização e edição
+- Validação em tempo real
+- Feedback visual para ações do usuário
 
 ### Padrões de Resposta
 
