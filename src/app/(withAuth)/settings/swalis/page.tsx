@@ -4,5 +4,5 @@ import { api } from "~/trpc/server";
 export default async function SwalisPage() {
   const swalisClassifications = await api.settings.getSwalisClassifications();
 
-  return <SwalisManagement swalisClassifications={swalisClassifications} />;
+  return <SwalisManagement initialData={swalisClassifications} />;
 }

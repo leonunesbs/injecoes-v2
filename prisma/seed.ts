@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { db } from "~/server/db";
 
 // Dados padrão para Indicações Médicas
 const indications = [
@@ -37,12 +35,6 @@ const indications = [
     name: "Membrana Neovascular Sub-Retiniana",
     description:
       "Formação de vasos anormais sob a retina, causando vazamentos e hemorragias",
-    isActive: true,
-  },
-  {
-    code: "OUTROS",
-    name: "Outros",
-    description: "Outras indicações não especificadas",
     isActive: true,
   },
 ];
@@ -133,14 +125,30 @@ const swalisClassifications = [
   },
 ];
 
+// Usuário padrão do sistema
+const defaultUser = {
+  id: "system-user",
+  name: "Sistema",
+  email: "sistema@injecoes.com",
+  emailVerified: new Date(),
+};
+
 async function main() {
   console.log("🌱 Iniciando seed do banco de dados...");
 
   try {
+    // Seed Usuário padrão
+    console.log("👤 Criando usuário padrão do sistema...");
+    await db.user.upsert({
+      where: { id: defaultUser.id },
+      update: {},
+      create: defaultUser,
+    });
+    console.log("✅ Usuário padrão criado/atualizado");
     // Seed Indicações
     console.log("📋 Criando indicações médicas...");
     for (const indication of indications) {
-      await prisma.indication.upsert({
+      await db.indication.upsert({
         where: { code: indication.code },
         update: {},
         create: indication,
@@ -151,7 +159,7 @@ async function main() {
     // Seed Medicamentos
     console.log("💊 Criando medicamentos...");
     for (const medication of medications) {
-      await prisma.medication.upsert({
+      await db.medication.upsert({
         where: { code: medication.code },
         update: {},
         create: medication,
@@ -162,7 +170,7 @@ async function main() {
     // Seed Classificações Swalis
     console.log("🏥 Criando classificações Swalis...");
     for (const swalis of swalisClassifications) {
-      await prisma.swalisClassification.upsert({
+      await db.swalisClassification.upsert({
         where: { code: swalis.code },
         update: {},
         create: swalis,
@@ -184,7 +192,7 @@ main()
     console.error("💥 Falha no seed:", e);
     process.exit(1);
   })
-  .finally(async () => {
+  .finally(() => {
     console.log("🔌 Desconectando do banco de dados...");
-    await prisma.$disconnect();
+    void db.$disconnect();
   });

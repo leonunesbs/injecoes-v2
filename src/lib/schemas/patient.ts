@@ -30,13 +30,18 @@ export type PatientSettingsFormData = z.infer<typeof patientSettingsSchema>;
 // Patient Indication Schema (for creating new patient indications)
 export const patientIndicationSchema = z.object({
   id: z.string().optional(),
-  patientId: z.string().min(1, "ID do paciente é obrigatório"),
+  patientRefId: z
+    .number()
+    .int("ID do paciente deve ser um número inteiro")
+    .positive("ID do paciente deve ser um número positivo"),
   patientName: z
     .string()
     .min(1, "Nome do paciente é obrigatório")
     .max(100, "Nome do paciente deve ter no máximo 100 caracteres"),
   indicationId: z.string().min(1, "Indicação é obrigatória"),
+  indicationOther: z.string().optional(),
   medicationId: z.string().min(1, "Medicação é obrigatória"),
+  medicationOther: z.string().optional(),
   swalisId: z.string().min(1, "Classificação Swalis é obrigatória"),
   observations: z.string().optional(),
   indicationOD: z.number().min(0, "Indicações OD não podem ser negativas"),

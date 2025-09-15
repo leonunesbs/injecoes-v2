@@ -4,5 +4,5 @@ import { api } from "~/trpc/server";
 export default async function IndicationsPage() {
   const indications = await api.settings.getIndications();
 
-  return <IndicationsManagement indications={indications} />;
+  return <IndicationsManagement initialData={indications} />;
 }

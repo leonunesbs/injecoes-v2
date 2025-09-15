@@ -1,16 +1,29 @@
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
+import { Skeleton } from "~/components/ui/skeleton";
 
 export default function Loading() {
   return (
-    <Card>
-      <CardHeader>
-        <div className="bg-muted h-6 w-48 animate-pulse rounded"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center justify-center py-8">
-          <div className="text-muted-foreground">Carregando prescrições...</div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-96" />
         </div>
-      </CardContent>
-    </Card>
+        <Skeleton className="h-10 w-32" />
+      </div>
+
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

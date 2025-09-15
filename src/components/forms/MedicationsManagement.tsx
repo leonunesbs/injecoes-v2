@@ -36,18 +36,28 @@ type Medication = Prisma.MedicationGetPayload<{
     name: true;
     code: true;
     activeSubstance: true;
+    isActive: true;
     createdAt: true;
+    updatedAt: true;
   };
 }>;
 
 interface MedicationsManagementProps {
-  medications: Medication[];
+  initialData: Medication[];
 }
 
 export function MedicationsManagement({
-  medications,
+  initialData,
 }: MedicationsManagementProps) {
   const utils = api.useUtils();
+  const { data: medications } = api.settings.getMedications.useQuery(
+    undefined,
+    {
+      initialData,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const form = useForm<MedicationFormData>({
     resolver: zodResolver(medicationSchema),
@@ -99,7 +109,7 @@ export function MedicationsManagement({
                 code: med.code,
                 name: med.name,
                 activeSubstance: med.activeSubstance,
-                isActive: true,
+                isActive: med.isActive,
               }))}
             />
           </CardContent>

@@ -38,18 +38,24 @@ type SwalisClassification = Prisma.SwalisClassificationGetPayload<{
     code: true;
     priority: true;
     description: true;
+    isActive: true;
     createdAt: true;
+    updatedAt: true;
   };
 }>;
 
 interface SwalisManagementProps {
-  swalisClassifications: SwalisClassification[];
+  initialData: SwalisClassification[];
 }
 
-export function SwalisManagement({
-  swalisClassifications,
-}: SwalisManagementProps) {
+export function SwalisManagement({ initialData }: SwalisManagementProps) {
   const utils = api.useUtils();
+  const { data: swalisClassifications } =
+    api.settings.getSwalisClassifications.useQuery(undefined, {
+      initialData,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    });
 
   const form = useForm<SwalisClassificationFormData>({
     resolver: zodResolver(swalisClassificationSchema),
@@ -107,7 +113,7 @@ export function SwalisManagement({
                 name: item.name,
                 description: item.description ?? "",
                 priority: item.priority,
-                isActive: true,
+                isActive: item.isActive,
               }))}
             />
           </CardContent>

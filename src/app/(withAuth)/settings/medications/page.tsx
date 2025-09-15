@@ -4,5 +4,5 @@ import { api } from "~/trpc/server";
 export default async function MedicationsPage() {
   const medications = await api.settings.getMedications();
 
-  return <MedicationsManagement medications={medications} />;
+  return <MedicationsManagement initialData={medications} />;
 }

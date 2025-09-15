@@ -57,7 +57,7 @@ export const patientRouter = createTRPCRouter({
           },
           _count: {
             select: {
-              consultations: true,
+              prescriptions: true,
               injections: true,
             },
           },
@@ -89,14 +89,11 @@ export const patientRouter = createTRPCRouter({
           createdBy: {
             select: { name: true, email: true },
           },
-          consultations: {
-            orderBy: { consultationDate: "desc" },
+          prescriptions: {
+            orderBy: { createdAt: "desc" },
             include: {
               doctor: {
                 select: { name: true, email: true },
-              },
-              prescriptions: {
-                orderBy: { createdAt: "desc" },
               },
             },
           },
@@ -108,6 +105,23 @@ export const patientRouter = createTRPCRouter({
               },
             },
           },
+        },
+      });
+    }),
+
+  // Obter paciente por refId
+  getByRefId: protectedProcedure
+    .input(z.object({ refId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.patient.findFirst({
+        where: {
+          refId: input.refId.toString(),
+          isActive: true,
+        },
+        select: {
+          id: true,
+          refId: true,
+          name: true,
         },
       });
     }),
@@ -193,8 +207,8 @@ export const patientRouter = createTRPCRouter({
     return stats.map((stat) => {
       const swalis = swalisData.find((s) => s.id === stat.swalisId);
       return {
-        swalis: swalis?.name || "Desconhecido",
-        priority: swalis?.priority || 999,
+        swalis: swalis?.name ?? "Desconhecido",
+        priority: swalis?.priority ?? 999,
         count: stat._count.id ?? 0,
       };
     });

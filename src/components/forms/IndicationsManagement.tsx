@@ -37,18 +37,28 @@ type Indication = Prisma.IndicationGetPayload<{
     name: true;
     code: true;
     description: true;
+    isActive: true;
     createdAt: true;
+    updatedAt: true;
   };
 }>;
 
 interface IndicationsManagementProps {
-  indications: Indication[];
+  initialData: Indication[];
 }
 
 export function IndicationsManagement({
-  indications,
+  initialData,
 }: IndicationsManagementProps) {
   const utils = api.useUtils();
+  const { data: indications } = api.settings.getIndications.useQuery(
+    undefined,
+    {
+      initialData,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  );
 
   const form = useForm<IndicationFormData>({
     resolver: zodResolver(indicationSchema),
@@ -102,7 +112,7 @@ export function IndicationsManagement({
                 code: indication.code,
                 name: indication.name,
                 description: indication.description ?? "",
-                isActive: true,
+                isActive: indication.isActive,
               }))}
             />
           </CardContent>

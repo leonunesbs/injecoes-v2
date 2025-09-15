@@ -1,22 +1,26 @@
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 
+import { Skeleton } from "~/components/ui/skeleton";
+
 export default function Loading() {
   return (
-    <Card>
-      <CardHeader>
-        <div className="bg-muted h-6 w-48 animate-pulse rounded"></div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div className="bg-muted h-4 w-32 animate-pulse rounded"></div>
-          <div className="bg-muted h-10 w-full animate-pulse rounded"></div>
-          <div className="bg-muted h-4 w-40 animate-pulse rounded"></div>
-          <div className="bg-muted h-10 w-full animate-pulse rounded"></div>
-          <div className="bg-muted h-4 w-36 animate-pulse rounded"></div>
-          <div className="bg-muted h-10 w-full animate-pulse rounded"></div>
-          <div className="bg-muted h-10 w-32 animate-pulse rounded"></div>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-6 w-48" />
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-4 w-36" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
