@@ -17,6 +17,7 @@ Documentação relacionada ao banco de dados e schema.
 Documentação da arquitetura e design do sistema.
 
 - **[Sistema de Restante](./architecture/balance-system.md)** - Fluxo completo do sistema de restante de injeções
+- **[Responsive Design](./architecture/responsive-design.md)** - Design responsivo e otimizações de interface
 - **Design Patterns** - Padrões de design utilizados
 - **Data Flow** - Fluxo de dados no sistema
 
@@ -99,4 +100,4 @@ Esta documentação é atualizada regularmente. Para contribuir:
 ---
 
 **Última atualização**: Dezembro 2024  
-**Versão da documentação**: 2.0.0
+**Versão da documentação**: 2.0.1

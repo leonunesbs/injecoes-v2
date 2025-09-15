@@ -17,7 +17,8 @@ docs/
 │
 ├── architecture/               # 🏗️ Arquitetura
 │   ├── README.md               # Visão geral da arquitetura
-│   └── balance-system.md       # Sistema de restante de injeções
+│   ├── balance-system.md       # Sistema de restante de injeções
+│   └── responsive-design.md    # Design responsivo e interface
 │
 ├── api/                        # 🔌 API
 │   └── README.md               # Documentação da API
@@ -86,6 +87,7 @@ docs/
 ### Conceitos Importantes
 
 - **Sistema de Restante**: [balance-system.md](./architecture/balance-system.md)
+- **Design Responsivo**: [responsive-design.md](./architecture/responsive-design.md)
 - **Schema Prisma**: [schema.md](./database/schema.md)
 - **Migrações**: [migrations.md](./database/migrations.md)
 - **Deploy**: [deployment/README.md](./deployment/README.md)
@@ -114,5 +116,5 @@ Para contribuir com a documentação:
 ## 🔄 Atualizações
 
 - **Última atualização**: Dezembro 2024
-- **Versão da documentação**: 2.0.0
+- **Versão da documentação**: 2.0.1
 - **Próxima revisão**: Janeiro 2025

@@ -103,17 +103,27 @@ Guias completos para usuários finais do sistema de injeções oftalmológicas.
 
 ### Responsividade
 
-- Design adaptativo
-- Touch-friendly
-- Performance otimizada
-- Offline capability
+- **Design Adaptativo**: Interface que se adapta automaticamente a diferentes tamanhos de tela
+- **Touch-Friendly**: Elementos otimizados para interação por toque (mínimo 44px)
+- **Performance Otimizada**: Carregamento rápido e navegação fluida
+- **Breakpoints Inteligentes**:
+  - Mobile: `< 640px` - Layout vertical compacto
+  - Tablet: `640px - 1024px` - Layout híbrido
+  - Desktop: `> 1024px` - Layout completo
 
 ### Funcionalidades Mobile
 
-- Aplicação rápida de injeções
-- Consulta de restantes
-- Notificações push
-- Sincronização automática
+- **Aplicação Rápida**: Interface simplificada para aplicação de injeções
+- **Consulta de Restantes**: Visualização otimizada do saldo de injeções
+- **Formulários Adaptativos**: Campos que se ajustam ao tamanho da tela
+- **Navegação Intuitiva**: Menu hambúrguer e navegação por gestos
+
+### Otimizações Específicas
+
+- **Botões Maiores**: Tamanho mínimo de 44px para facilitar o toque
+- **Texto Legível**: Tamanhos de fonte otimizados para leitura em telas pequenas
+- **Espaçamento Adequado**: Gaps e padding ajustados para cada dispositivo
+- **Scroll Suave**: Navegação fluida entre seções
 
 ## 🆘 Suporte
 

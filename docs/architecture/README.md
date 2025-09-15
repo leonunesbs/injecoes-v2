@@ -5,6 +5,7 @@ Documentação da arquitetura e design do sistema de injeções oftalmológicas.
 ## 📋 Conteúdo
 
 - **[Sistema de Restante](./balance-system.md)** - Fluxo completo do sistema de restante de injeções
+- **[Responsive Design](./responsive-design.md)** - Design responsivo e otimizações de interface
 - **[Design Patterns](./design-patterns.md)** - Padrões de design utilizados
 - **[Data Flow](./data-flow.md)** - Fluxo de dados no sistema
 
