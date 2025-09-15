@@ -40,7 +40,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
             <Link href="/settings/medications">Medicamentos</Link>
           </TabsTrigger>
           <TabsTrigger value="swalis" asChild>
-            <Link href="/settings/swalis">Classificação Swalis</Link>
+            <Link href="/settings/swalis">Swalis</Link>
           </TabsTrigger>
         </TabsList>
 

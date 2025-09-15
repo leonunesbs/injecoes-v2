@@ -242,8 +242,11 @@ export function PatientIndicationForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 sm:space-y-6"
+      >
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
           {/* Patient ID */}
           <FormField
             control={form.control}
@@ -327,7 +330,7 @@ export function PatientIndicationForm({
                     }
                     size="sm"
                     onClick={() => handleIndicationChange(indication.id)}
-                    className="h-10 min-w-[80px]"
+                    className="h-9 min-w-[70px] text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                   >
                     {indication.code}
                   </Button>
@@ -338,7 +341,7 @@ export function PatientIndicationForm({
                   variant={showIndicationOther ? "default" : "outline"}
                   size="sm"
                   onClick={handleIndicationOtherToggle}
-                  className="h-10 min-w-[100px] border-dashed"
+                  className="h-9 min-w-[80px] border-dashed text-xs sm:h-10 sm:min-w-[100px] sm:text-sm"
                 >
                   Outro
                 </Button>
@@ -404,7 +407,7 @@ export function PatientIndicationForm({
                     }
                     size="sm"
                     onClick={() => handleMedicationChange(medication.id)}
-                    className="h-10 min-w-[80px]"
+                    className="h-9 min-w-[70px] text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                   >
                     {medication.code}
                   </Button>
@@ -415,7 +418,7 @@ export function PatientIndicationForm({
                   variant={showMedicationOther ? "default" : "outline"}
                   size="sm"
                   onClick={handleMedicationOtherToggle}
-                  className="h-10 min-w-[100px] border-dashed"
+                  className="h-9 min-w-[80px] border-dashed text-xs sm:h-10 sm:min-w-[100px] sm:text-sm"
                 >
                   Outro
                 </Button>
@@ -479,7 +482,7 @@ export function PatientIndicationForm({
                     variant={field.value === swalis.id ? "default" : "outline"}
                     size="sm"
                     onClick={() => handleSwalisChange(swalis.id)}
-                    className="h-10 min-w-[80px]"
+                    className="h-9 min-w-[70px] text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                   >
                     {swalis.code}
                   </Button>
@@ -502,7 +505,7 @@ export function PatientIndicationForm({
           )}
         />
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
           {/* Indications OD - Radio Buttons */}
           <FormField
             control={form.control}
@@ -510,7 +513,7 @@ export function PatientIndicationForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Injeções Prescritas OD</FormLabel>
-                <FormDescription className="mb-4">
+                <FormDescription className="mb-3 sm:mb-4">
                   {selectedIndication
                     ? `Injeções para OD no tratamento de ${selectedIndication.name}`
                     : "Número de injeções a serem adicionadas ao restante do olho direito"}
@@ -527,7 +530,7 @@ export function PatientIndicationForm({
                       }
                       size="sm"
                       onClick={() => handleODQuantityChange(quantity)}
-                      className="h-10 min-w-[50px]"
+                      className="h-9 min-w-[40px] text-xs sm:h-10 sm:min-w-[50px] sm:text-sm"
                     >
                       {quantity}
                     </Button>
@@ -537,7 +540,7 @@ export function PatientIndicationForm({
                     variant={showODOther ? "default" : "outline"}
                     size="sm"
                     onClick={handleODOtherToggle}
-                    className="h-10 min-w-[80px] border-dashed"
+                    className="h-9 min-w-[70px] border-dashed text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                   >
                     Outro
                   </Button>
@@ -574,7 +577,7 @@ export function PatientIndicationForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Injeções Prescritas OE</FormLabel>
-                <FormDescription className="mb-4">
+                <FormDescription className="mb-3 sm:mb-4">
                   {selectedIndication
                     ? `Injeções para OE no tratamento de ${selectedIndication.name}`
                     : "Número de injeções a serem adicionadas ao restante do olho esquerdo"}
@@ -591,7 +594,7 @@ export function PatientIndicationForm({
                       }
                       size="sm"
                       onClick={() => handleOEQuantityChange(quantity)}
-                      className="h-10 min-w-[50px]"
+                      className="h-9 min-w-[40px] text-xs sm:h-10 sm:min-w-[50px] sm:text-sm"
                     >
                       {quantity}
                     </Button>
@@ -601,7 +604,7 @@ export function PatientIndicationForm({
                     variant={showOEOther ? "default" : "outline"}
                     size="sm"
                     onClick={handleOEOtherToggle}
-                    className="h-10 min-w-[80px] border-dashed"
+                    className="h-9 min-w-[70px] border-dashed text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                   >
                     Outro
                   </Button>
@@ -639,7 +642,7 @@ export function PatientIndicationForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Começar por</FormLabel>
-              <FormDescription className="mb-4">
+              <FormDescription className="mb-3 sm:mb-4">
                 Selecione por qual olho o tratamento deve começar
               </FormDescription>
               <div className="flex flex-wrap gap-2">
@@ -648,7 +651,7 @@ export function PatientIndicationForm({
                   variant={field.value === true ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleStartWithChange(true)}
-                  className="h-10 min-w-[80px]"
+                  className="h-9 min-w-[70px] text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                 >
                   OD
                 </Button>
@@ -657,7 +660,7 @@ export function PatientIndicationForm({
                   variant={field.value === false ? "default" : "outline"}
                   size="sm"
                   onClick={() => handleStartWithChange(false)}
-                  className="h-10 min-w-[80px]"
+                  className="h-9 min-w-[70px] text-xs sm:h-10 sm:min-w-[80px] sm:text-sm"
                 >
                   OE
                 </Button>
@@ -695,7 +698,11 @@ export function PatientIndicationForm({
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="h-11 w-full sm:h-12"
+          disabled={isLoading}
+        >
           {isLoading ? "Salvando..." : "Prescrever Injeções"}
         </Button>
       </form>

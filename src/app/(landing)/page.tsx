@@ -15,9 +15,9 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { HydrateClient } from "~/trpc/server";
+import Link from "next/link";
 
 export default async function LandingPage() {
   const mainActions = [
