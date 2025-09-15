@@ -179,6 +179,10 @@ export const prescriptionsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
+      if (!id) {
+        throw new Error("ID do paciente é obrigatório para atualização");
+      }
+
       // Buscar o paciente atual para somar ao restante existente
       const currentPatient = await ctx.db.patient.findUnique({
         where: { id },

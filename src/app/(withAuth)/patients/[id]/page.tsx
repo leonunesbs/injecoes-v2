@@ -66,7 +66,7 @@ export default function PatientPage() {
     refetch,
   } = api.patient.getById.useQuery({ id: patientId }, { enabled: !!patientId });
 
-  const updatePatientMutation = api.patient.updateBasicInfo.useMutation({
+  const updatePatientMutation = api.patient.update.useMutation({
     onSuccess: () => {
       toast.success("Paciente atualizado com sucesso!");
       setIsEditing(false);

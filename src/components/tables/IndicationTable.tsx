@@ -65,7 +65,7 @@ export function IndicationTable({ data }: IndicationTableProps) {
     },
   });
 
-  const handleEdit = (item: IndicationFormData & { id: string }) => {
+  const handleEdit = (item: IndicationTableData) => {
     setEditingId(item.id);
     setEditData({
       code: item.code,

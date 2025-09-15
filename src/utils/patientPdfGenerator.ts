@@ -129,7 +129,7 @@ export async function fillPatientPdfTemplateWithData(
 }
 
 export function createPatientPdfBlob(pdfBytes: Uint8Array): string {
-  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const blob = new Blob([pdfBytes as BlobPart], { type: "application/pdf" });
   const blobUrl = URL.createObjectURL(blob);
   return blobUrl;
 }
