@@ -20,7 +20,35 @@ import {
 } from "~/components/ui/card";
 
 import { Badge } from "~/components/ui/badge";
+import Link from "next/link";
+import type { Metadata } from "next";
 import { api } from "~/trpc/server";
+
+export const metadata: Metadata = {
+  title: "Dashboard - Sistema de Injeções",
+  description:
+    "Análise crítica dos dados de indicações e perfil clínico das condições. Visualize estatísticas de pacientes, prescrições, medicamentos e adesão ao tratamento.",
+  keywords: [
+    "dashboard",
+    "injeções",
+    "medicamentos",
+    "prescrições",
+    "pacientes",
+    "análise clínica",
+    "adesão ao tratamento",
+    "sistema médico",
+  ],
+  openGraph: {
+    title: "Dashboard - Sistema de Injeções",
+    description:
+      "Análise crítica dos dados de indicações e perfil clínico das condições",
+    type: "website",
+  },
+  robots: {
+    index: false, // Dashboard é área privada, não deve ser indexado
+    follow: false,
+  },
+};
 
 export default async function DashboardPage() {
   // Buscar todos os dados no servidor
@@ -351,9 +379,12 @@ export default async function DashboardPage() {
                   className="flex items-center justify-between rounded-lg border p-2"
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-2">
-                    <span className="flex-shrink-0 text-xs font-bold">
+                    <Link
+                      href={`/patients/${patient.id}`}
+                      className="flex-shrink-0 text-xs font-bold hover:underline"
+                    >
                       {patient.refId}
-                    </span>
+                    </Link>
                   </div>
                   <div className="ml-2 flex flex-shrink-0 items-center gap-2">
                     <Badge
