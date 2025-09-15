@@ -139,7 +139,7 @@ export default async function DashboardPage() {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-medium">
-                      {profile.indication.name}
+                      {profile.indication.code}
                     </p>
                     <p className="text-muted-foreground text-xs">
                       {profile.patientCount} pacientes
@@ -236,7 +236,7 @@ export default async function DashboardPage() {
                 <div key={stat.indication.id} className="rounded-lg border p-2">
                   <div className="mb-1 flex items-center justify-between">
                     <h4 className="truncate text-xs font-medium">
-                      {stat.indication.name}
+                      {stat.indication.code}
                     </h4>
                     <Badge
                       variant="outline"
@@ -354,7 +354,6 @@ export default async function DashboardPage() {
                     <span className="flex-shrink-0 text-xs font-bold">
                       {patient.refId}
                     </span>
-                    <span className="truncate text-xs">{patient.name}</span>
                   </div>
                   <div className="ml-2 flex flex-shrink-0 items-center gap-2">
                     <Badge
