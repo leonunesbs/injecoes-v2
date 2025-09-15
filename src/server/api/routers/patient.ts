@@ -16,14 +16,7 @@ export const patientRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      const {
-        limit,
-        cursor,
-        search,
-        swalisFilter,
-        indicationFilter,
-        medicationFilter,
-      } = input;
+      const { limit, cursor, search } = input;
 
       const where = {
         isActive: true,
@@ -33,9 +26,7 @@ export const patientRouter = createTRPCRouter({
             { refId: { contains: search, mode: "insensitive" as const } },
           ],
         }),
-        ...(swalisFilter && { swalisId: swalisFilter }),
-        ...(indicationFilter && { indicationId: indicationFilter }),
-        ...(medicationFilter && { medicationId: medicationFilter }),
+        // Filtros serão aplicados via prescrições
       };
 
       const patients = await ctx.db.patient.findMany({
@@ -43,17 +34,21 @@ export const patientRouter = createTRPCRouter({
         take: limit + 1,
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: [
-          // 1º critério: Prioridade SWALIS (menor número = maior prioridade)
-          { swalis: { priority: "asc" } },
-          // 2º critério: Data de indicação (mais antiga = maior prioridade)
+          // 1º critério: Data de indicação (mais antiga = maior prioridade)
           { createdAt: "asc" },
         ],
         include: {
-          indication: true,
-          medication: true,
-          swalis: true,
           createdBy: {
             select: { name: true, email: true },
+          },
+          prescriptions: {
+            include: {
+              indication: true,
+              medication: true,
+              swalis: true,
+            },
+            orderBy: { createdAt: "desc" },
+            take: 1,
           },
           _count: {
             select: {
@@ -83,15 +78,15 @@ export const patientRouter = createTRPCRouter({
       return ctx.db.patient.findUnique({
         where: { id: input.id },
         include: {
-          indication: true,
-          medication: true,
-          swalis: true,
           createdBy: {
             select: { name: true, email: true },
           },
           prescriptions: {
             orderBy: { createdAt: "desc" },
             include: {
+              indication: true,
+              medication: true,
+              swalis: true,
               doctor: {
                 select: { name: true, email: true },
               },
@@ -150,9 +145,15 @@ export const patientRouter = createTRPCRouter({
           createdById: ctx.session.user.id,
         },
         include: {
-          indication: true,
-          medication: true,
-          swalis: true,
+          prescriptions: {
+            include: {
+              indication: true,
+              medication: true,
+              swalis: true,
+            },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
         },
       });
     }),
@@ -183,35 +184,48 @@ export const patientRouter = createTRPCRouter({
         where: { id },
         data: updateData,
         include: {
-          indication: true,
-          medication: true,
-          swalis: true,
+          prescriptions: {
+            include: {
+              indication: true,
+              medication: true,
+              swalis: true,
+            },
+            orderBy: { createdAt: "desc" },
+            take: 1,
+          },
         },
       });
     }),
 
   // Obter estatísticas de pacientes por SWALIS
   getStatsBySwalis: protectedProcedure.query(async ({ ctx }) => {
-    const stats = await ctx.db.patient.groupBy({
-      by: ["swalisId"],
-      where: { isActive: true },
-      _count: { id: true },
-      orderBy: { swalisId: "asc" },
-    });
-
     const swalisData = await ctx.db.swalisClassification.findMany({
       where: { isActive: true },
       orderBy: { priority: "asc" },
     });
 
-    return stats.map((stat) => {
-      const swalis = swalisData.find((s) => s.id === stat.swalisId);
-      return {
-        swalis: swalis?.name ?? "Desconhecido",
-        priority: swalis?.priority ?? 999,
-        count: stat._count.id ?? 0,
-      };
-    });
+    const stats = await Promise.all(
+      swalisData.map(async (swalis) => {
+        const count = await ctx.db.patient.count({
+          where: {
+            isActive: true,
+            prescriptions: {
+              some: {
+                swalisId: swalis.id,
+              },
+            },
+          },
+        });
+
+        return {
+          swalis: swalis.name,
+          priority: swalis.priority,
+          count,
+        };
+      }),
+    );
+
+    return stats;
   }),
 
   // Obter pacientes urgentes (SWALIS A1 e A2)
@@ -232,16 +246,26 @@ export const patientRouter = createTRPCRouter({
       return ctx.db.patient.findMany({
         where: {
           isActive: true,
-          swalisId: { in: swalisIds },
+          prescriptions: {
+            some: {
+              swalisId: { in: swalisIds },
+            },
+          },
         },
         take: input.limit,
-        orderBy: [{ swalis: { priority: "asc" } }, { createdAt: "asc" }],
+        orderBy: [{ createdAt: "asc" }],
         include: {
-          indication: true,
-          medication: true,
-          swalis: true,
           createdBy: {
             select: { name: true, email: true },
+          },
+          prescriptions: {
+            include: {
+              indication: true,
+              medication: true,
+              swalis: true,
+            },
+            orderBy: { createdAt: "desc" },
+            take: 1,
           },
         },
       });

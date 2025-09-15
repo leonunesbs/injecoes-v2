@@ -39,7 +39,7 @@ Este diretório contém o schema Prisma para o sistema de gerenciamento de inje�
   - Identificação: `refId`, `name`, `birthDate`, `phone`, `email`
   - Relacionamentos: `indicationId`, `medicationId`, `swalisId`
   - Campos específicos: `indicationOther`, `medicationOther`
-  - Sistema de saldo: `balanceOD`, `balanceOS`, `totalPrescribedOD`, `totalPrescribedOS`, `totalAppliedOD`, `totalAppliedOS`
+  - Sistema de restante: `balanceOD`, `balanceOS`, `totalPrescribedOD`, `totalPrescribedOS`, `totalAppliedOD`, `totalAppliedOS`
   - Configurações: `startWithOD`, `isActive`
   - Auditoria: `createdById`, `createdAt`, `updatedAt`
 
@@ -76,11 +76,11 @@ Este diretório contém o schema Prisma para o sistema de gerenciamento de inje�
 - Eliminação de campos de texto livre para categorias padronizadas
 - Possibilidade de "Outros" com campos específicos
 
-### 2. Sistema de Saldo de Injeções
+### 2. Sistema de Restante de Injeções
 
-- Saldo atual de injeções por olho (OD/OS)
+- Restante atual de injeções por olho (OD/OS)
 - Histórico de prescrições e aplicações
-- Recarga de saldo a cada consulta médica
+- Recarga de restante a cada consulta médica
 - Rastreamento completo de movimentações
 
 ### 3. Rastreamento Avançado

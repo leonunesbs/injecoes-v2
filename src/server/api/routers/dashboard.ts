@@ -1,6 +1,29 @@
+import type { Injection, Patient } from "@prisma/client";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 import { z } from "zod";
+
+// Tipos específicos para análises do dashboard
+type IndicationApplicationData = {
+  totalAppliedOD: number;
+  totalAppliedOS: number;
+  totalBalanceOD: number;
+  totalBalanceOS: number;
+  patientCount: number;
+};
+
+type SwalisApplicationData = {
+  totalAppliedOD: number;
+  totalAppliedOS: number;
+  totalBalanceOD: number;
+  totalBalanceOS: number;
+  patientCount: number;
+};
+
+type MedicationApplicationData = {
+  totalAppliedOD: number;
+  totalAppliedOS: number;
+};
 
 export const dashboardRouter = createTRPCRouter({
   // Análise de perfil clínico das condições
@@ -37,37 +60,34 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Agrupar dados de aplicação por indicação
-    const applicationByIndication = indicationApplicationData.reduce((acc, prescription) => {
-      const indicationId = prescription.indicationId;
-      if (!acc[indicationId]) {
-        acc[indicationId] = {
+    const applicationByIndication = indicationApplicationData.reduce(
+      (acc, prescription) => {
+        const indicationId = prescription.indicationId;
+        acc[indicationId] ??= {
           totalAppliedOD: 0,
           totalAppliedOS: 0,
           totalBalanceOD: 0,
           totalBalanceOS: 0,
           patientCount: 0,
         };
-      }
-      acc[indicationId]!.totalAppliedOD += prescription.patient.totalAppliedOD;
-      acc[indicationId]!.totalAppliedOS += prescription.patient.totalAppliedOS;
-      acc[indicationId]!.totalBalanceOD += prescription.patient.balanceOD;
-      acc[indicationId]!.totalBalanceOS += prescription.patient.balanceOS;
-      acc[indicationId]!.patientCount += 1;
-      return acc;
-    }, {} as Record<string, {
-      totalAppliedOD: number;
-      totalAppliedOS: number;
-      totalBalanceOD: number;
-      totalBalanceOS: number;
-      patientCount: number;
-    }>);
+        acc[indicationId].totalAppliedOD += prescription.patient.totalAppliedOD;
+        acc[indicationId].totalAppliedOS += prescription.patient.totalAppliedOS;
+        acc[indicationId].totalBalanceOD += prescription.patient.balanceOD;
+        acc[indicationId].totalBalanceOS += prescription.patient.balanceOS;
+        acc[indicationId].patientCount += 1;
+        return acc;
+      },
+      {} as Record<string, IndicationApplicationData>,
+    );
 
     // Combinar dados de análise com detalhes das indicações
     const clinicalProfiles = indicationAnalysis.map((analysis) => {
       const indication = indicationDetails.find(
         (ind) => ind.id === analysis.indicationId,
       );
-      const applicationData = applicationByIndication[analysis.indicationId] || {
+      const applicationData = applicationByIndication[
+        analysis.indicationId
+      ] ?? {
         totalAppliedOD: 0,
         totalAppliedOS: 0,
         totalBalanceOD: 0,
@@ -87,17 +107,26 @@ export const dashboardRouter = createTRPCRouter({
         totalPrescribedOS: analysis._sum.prescribedOS ?? 0,
         totalAppliedOD: applicationData.totalAppliedOD,
         totalAppliedOS: applicationData.totalAppliedOS,
-        avgBalanceOD: applicationData.patientCount > 0 ? applicationData.totalBalanceOD / applicationData.patientCount : 0,
-        avgBalanceOS: applicationData.patientCount > 0 ? applicationData.totalBalanceOS / applicationData.patientCount : 0,
+        avgBalanceOD:
+          applicationData.patientCount > 0
+            ? applicationData.totalBalanceOD / applicationData.patientCount
+            : 0,
+        avgBalanceOS:
+          applicationData.patientCount > 0
+            ? applicationData.totalBalanceOS / applicationData.patientCount
+            : 0,
         totalPrescribed:
-          (analysis._sum.prescribedOD ?? 0) +
-          (analysis._sum.prescribedOS ?? 0),
+          (analysis._sum.prescribedOD ?? 0) + (analysis._sum.prescribedOS ?? 0),
         totalApplied:
           applicationData.totalAppliedOD + applicationData.totalAppliedOS,
         complianceRate:
-          (analysis._sum.prescribedOD ?? 0) + (analysis._sum.prescribedOS ?? 0) > 0
-            ? ((applicationData.totalAppliedOD + applicationData.totalAppliedOS) /
-                ((analysis._sum.prescribedOD ?? 0) + (analysis._sum.prescribedOS ?? 0))) *
+          (analysis._sum.prescribedOD ?? 0) +
+            (analysis._sum.prescribedOS ?? 0) >
+          0
+            ? ((applicationData.totalAppliedOD +
+                applicationData.totalAppliedOS) /
+                ((analysis._sum.prescribedOD ?? 0) +
+                  (analysis._sum.prescribedOS ?? 0))) *
               100
             : 0,
       };
@@ -160,35 +189,30 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Agrupar dados de aplicação por Swalis
-    const applicationBySwalis = swalisApplicationData.reduce((acc, prescription) => {
-      const swalisId = prescription.swalisId;
-      if (!acc[swalisId]) {
-        acc[swalisId] = {
+    const applicationBySwalis = swalisApplicationData.reduce(
+      (acc, prescription) => {
+        const swalisId = prescription.swalisId;
+        acc[swalisId] ??= {
           totalAppliedOD: 0,
           totalAppliedOS: 0,
           totalBalanceOD: 0,
           totalBalanceOS: 0,
           patientCount: 0,
         };
-      }
-      acc[swalisId]!.totalAppliedOD += prescription.patient.totalAppliedOD;
-      acc[swalisId]!.totalAppliedOS += prescription.patient.totalAppliedOS;
-      acc[swalisId]!.totalBalanceOD += prescription.patient.balanceOD;
-      acc[swalisId]!.totalBalanceOS += prescription.patient.balanceOS;
-      acc[swalisId]!.patientCount += 1;
-      return acc;
-    }, {} as Record<string, {
-      totalAppliedOD: number;
-      totalAppliedOS: number;
-      totalBalanceOD: number;
-      totalBalanceOS: number;
-      patientCount: number;
-    }>);
+        acc[swalisId].totalAppliedOD += prescription.patient.totalAppliedOD;
+        acc[swalisId].totalAppliedOS += prescription.patient.totalAppliedOS;
+        acc[swalisId].totalBalanceOD += prescription.patient.balanceOD;
+        acc[swalisId].totalBalanceOS += prescription.patient.balanceOS;
+        acc[swalisId].patientCount += 1;
+        return acc;
+      },
+      {} as Record<string, SwalisApplicationData>,
+    );
 
     // Combinar dados
     const swalisProfiles = swalisAnalysis.map((analysis) => {
       const swalis = swalisDetails.find((sw) => sw.id === analysis.swalisId);
-      const applicationData = applicationBySwalis[analysis.swalisId] || {
+      const applicationData = applicationBySwalis[analysis.swalisId] ?? {
         totalAppliedOD: 0,
         totalAppliedOS: 0,
         totalBalanceOD: 0,
@@ -208,13 +232,13 @@ export const dashboardRouter = createTRPCRouter({
         totalBalance:
           applicationData.totalBalanceOD + applicationData.totalBalanceOS,
         totalPrescribed:
-          (analysis._sum.prescribedOD ?? 0) +
-          (analysis._sum.prescribedOS ?? 0),
+          (analysis._sum.prescribedOD ?? 0) + (analysis._sum.prescribedOS ?? 0),
         totalApplied:
           applicationData.totalAppliedOD + applicationData.totalAppliedOS,
         avgBalancePerPatient:
           applicationData.patientCount > 0
-            ? (applicationData.totalBalanceOD + applicationData.totalBalanceOS) /
+            ? (applicationData.totalBalanceOD +
+                applicationData.totalBalanceOS) /
               applicationData.patientCount
             : 0,
       };
@@ -249,27 +273,27 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Agrupar dados de aplicação por medicamento
-    const applicationByMedication = medicationApplicationData.reduce((acc, prescription) => {
-      const medicationId = prescription.medicationId;
-      if (!acc[medicationId]) {
-        acc[medicationId] = {
+    const applicationByMedication = medicationApplicationData.reduce(
+      (acc, prescription) => {
+        const medicationId = prescription.medicationId;
+        acc[medicationId] ??= {
           totalAppliedOD: 0,
           totalAppliedOS: 0,
         };
-      }
-      acc[medicationId]!.totalAppliedOD += prescription.patient.totalAppliedOD;
-      acc[medicationId]!.totalAppliedOS += prescription.patient.totalAppliedOS;
-      return acc;
-    }, {} as Record<string, {
-      totalAppliedOD: number;
-      totalAppliedOS: number;
-    }>);
+        acc[medicationId].totalAppliedOD += prescription.patient.totalAppliedOD;
+        acc[medicationId].totalAppliedOS += prescription.patient.totalAppliedOS;
+        return acc;
+      },
+      {} as Record<string, MedicationApplicationData>,
+    );
 
     const medicationProfiles = medicationAnalysis.map((analysis) => {
       const medication = medicationDetails.find(
         (med) => med.id === analysis.medicationId,
       );
-      const applicationData = applicationByMedication[analysis.medicationId] || {
+      const applicationData = applicationByMedication[
+        analysis.medicationId
+      ] ?? {
         totalAppliedOD: 0,
         totalAppliedOS: 0,
       };
@@ -283,8 +307,7 @@ export const dashboardRouter = createTRPCRouter({
         },
         patientCount: analysis._count.id,
         totalPrescribed:
-          (analysis._sum.prescribedOD ?? 0) +
-          (analysis._sum.prescribedOS ?? 0),
+          (analysis._sum.prescribedOD ?? 0) + (analysis._sum.prescribedOS ?? 0),
         totalApplied:
           applicationData.totalAppliedOD + applicationData.totalAppliedOS,
         usageRate:
@@ -367,16 +390,26 @@ export const dashboardRouter = createTRPCRouter({
         const maxInterval = Math.max(...intervals);
 
         const latestPrescription = patient.prescriptions[0];
-        
+
         return {
           patient: {
             id: patient.id,
             refId: patient.refId,
             name: patient.name,
           },
-          indication: latestPrescription?.indication ?? { code: "Unknown", name: "Unknown" },
-          medication: latestPrescription?.medication ?? { code: "Unknown", name: "Unknown" },
-          swalis: latestPrescription?.swalis ?? { code: "Unknown", name: "Unknown", priority: 999 },
+          indication: latestPrescription?.indication ?? {
+            code: "Unknown",
+            name: "Unknown",
+          },
+          medication: latestPrescription?.medication ?? {
+            code: "Unknown",
+            name: "Unknown",
+          },
+          swalis: latestPrescription?.swalis ?? {
+            code: "Unknown",
+            name: "Unknown",
+            priority: 999,
+          },
           injectionCount: appliedInjections.length,
           intervals,
           avgInterval: Math.round(avgInterval),
@@ -418,9 +451,15 @@ export const dashboardRouter = createTRPCRouter({
 
     const indicationStats = indicationIntervalStats.map((indication) => {
       // Extrair pacientes únicos das prescrições
-      const uniquePatients = new Map();
-      indication.prescriptions.forEach(prescription => {
-        if (prescription.patient && !uniquePatients.has(prescription.patient.id)) {
+      const uniquePatients = new Map<
+        string,
+        Patient & { injections: Injection[] }
+      >();
+      indication.prescriptions.forEach((prescription) => {
+        if (
+          prescription.patient &&
+          !uniquePatients.has(prescription.patient.id)
+        ) {
           uniquePatients.set(prescription.patient.id, prescription.patient);
         }
       });
@@ -486,8 +525,10 @@ export const dashboardRouter = createTRPCRouter({
         patientCount: patients.length,
         patientsWithMultipleInjections: patientsWithIntervals.length,
         avgIntervalAcrossPatients: Math.round(avgIntervalAcrossPatients),
-        minIntervalAcrossPatients: allIntervals.length > 0 ? Math.min(...allIntervals) : 0,
-        maxIntervalAcrossPatients: allIntervals.length > 0 ? Math.max(...allIntervals) : 0,
+        minIntervalAcrossPatients:
+          allIntervals.length > 0 ? Math.min(...allIntervals) : 0,
+        maxIntervalAcrossPatients:
+          allIntervals.length > 0 ? Math.max(...allIntervals) : 0,
         intervalDistribution: {
           lessThan30Days: allIntervals.filter(
             (i): i is number => typeof i === "number" && i < 30,
@@ -599,9 +640,19 @@ export const dashboardRouter = createTRPCRouter({
           refId: patient.refId,
           name: patient.name,
           birthDate: patient.birthDate,
-          indication: latestPrescription?.indication ?? { code: "Unknown", name: "Unknown" },
-          medication: latestPrescription?.medication ?? { code: "Unknown", name: "Unknown" },
-          swalis: latestPrescription?.swalis ?? { code: "Unknown", name: "Unknown", priority: 999 },
+          indication: latestPrescription?.indication ?? {
+            code: "Unknown",
+            name: "Unknown",
+          },
+          medication: latestPrescription?.medication ?? {
+            code: "Unknown",
+            name: "Unknown",
+          },
+          swalis: latestPrescription?.swalis ?? {
+            code: "Unknown",
+            name: "Unknown",
+            priority: 999,
+          },
           totalPrescribedOD: patient.totalPrescribedOD,
           totalPrescribedOS: patient.totalPrescribedOS,
           totalAppliedOD: patient.totalAppliedOD,

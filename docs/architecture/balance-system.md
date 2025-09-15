@@ -1,8 +1,8 @@
-# Sistema de Saldo de Injeções - Fluxo Completo
+# Sistema de Restante de Injeções - Fluxo Completo
 
 ## Visão Geral
 
-O sistema de saldo de injeções funciona como um "crédito" que o paciente possui para receber injeções. Este saldo é recarregado a cada consulta médica através de prescrições.
+O sistema de restante de injeções funciona como um "crédito" que o paciente possui para receber injeções. Este restante é recarregado a cada consulta médica através de prescrições.
 
 ## Fluxo do Sistema
 
@@ -10,7 +10,7 @@ O sistema de saldo de injeções funciona como um "crédito" que o paciente poss
 
 ```
 Paciente → Indicação + Medicação + Classificação Swalis
-- Saldo inicial: 0 injeções OD/OS
+- Restante inicial: 0 injeções OD/OS
 - Total prescrito: 0
 - Total aplicado: 0
 ```
@@ -21,15 +21,15 @@ Paciente → Indicação + Medicação + Classificação Swalis
 Médico → Consulta → Prescrição de Injeções
 - Prescreve X injeções para OD
 - Prescreve Y injeções para OS
-- Atualiza saldo do paciente
+- Atualiza restante do paciente
 ```
 
 ### 3. Aplicação de Injeções
 
 ```
-Enfermeiro → Aplica Injeção → Decrementa Saldo
-- Aplica 1 injeção OD → Saldo OD -1
-- Aplica 1 injeção OS → Saldo OS -1
+Enfermeiro → Aplica Injeção → Decrementa Restante
+- Aplica 1 injeção OD → Restante OD -1
+- Aplica 1 injeção OS → Restante OS -1
 - Atualiza total aplicado
 ```
 
@@ -71,13 +71,13 @@ Enfermeiro → Aplica Injeção → Decrementa Saldo
 ### 1. Prescrição de Injeções
 
 - A cada consulta, o médico pode prescrever novas injeções
-- As prescrições são adicionadas ao saldo do paciente
-- O saldo é incrementado: `balanceOD += prescribedOD`
+- As prescrições são adicionadas ao restante do paciente
+- O restante é incrementado: `balanceOD += prescribedOD`
 
 ### 2. Aplicação de Injeções
 
-- Só é possível aplicar injeções se houver saldo disponível
-- A cada aplicação, o saldo é decrementado: `balanceOD -= appliedOD`
+- Só é possível aplicar injeções se houver restante disponível
+- A cada aplicação, o restante é decrementado: `balanceOD -= appliedOD`
 - O total aplicado é incrementado: `totalAppliedOD += appliedOD`
 
 ### 3. Validações
@@ -115,7 +115,7 @@ Enfermeiro → Aplica Injeção → Decrementa Saldo
 
 ### Métricas Importantes
 
-- Pacientes com saldo baixo (< 2 injeções)
+- Pacientes com restante baixo (< 2 injeções)
 - Taxa de adesão ao tratamento
 - Eficácia por medicamento
 - Distribuição por classificação Swalis
@@ -137,8 +137,8 @@ Enfermeiro → Aplica Injeção → Decrementa Saldo
 
 ## Próximos Passos
 
-1. Implementar validações de saldo
+1. Implementar validações de restante
 2. Criar interface de prescrição
-3. Desenvolver dashboard de saldos
+3. Desenvolver dashboard de restantes
 4. Implementar alertas automáticos
 5. Criar relatórios de compliance

@@ -87,7 +87,7 @@ export const prescriptionsRouter = createTRPCRouter({
           },
         });
 
-        // Atualizar saldo do paciente
+        // Atualizar restante do paciente
         await ctx.db.patient.update({
           where: { refId: refIdString },
           data: {
@@ -179,7 +179,7 @@ export const prescriptionsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
-      // Buscar o paciente atual para somar ao saldo existente
+      // Buscar o paciente atual para somar ao restante existente
       const currentPatient = await ctx.db.patient.findUnique({
         where: { id },
       });
@@ -391,6 +391,93 @@ export const prescriptionsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return ctx.db.prescription.delete({
         where: { id: input.id },
+      });
+    }),
+
+  // Get prescription by ID with full details
+  getPrescriptionById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.prescription.findUnique({
+        where: { id: input.id },
+        include: {
+          patient: {
+            select: {
+              id: true,
+              refId: true,
+              name: true,
+              birthDate: true,
+              balanceOD: true,
+              balanceOS: true,
+              totalPrescribedOD: true,
+              totalPrescribedOS: true,
+              totalAppliedOD: true,
+              totalAppliedOS: true,
+            },
+          },
+          indication: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              description: true,
+            },
+          },
+          medication: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              activeSubstance: true,
+            },
+          },
+          swalis: {
+            select: {
+              id: true,
+              name: true,
+              code: true,
+              description: true,
+              priority: true,
+            },
+          },
+          doctor: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+    }),
+
+  // Get injections for a specific prescription
+  getInjectionsByPrescription: protectedProcedure
+    .input(z.object({ prescriptionId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      // First get the prescription to find the patient
+      const prescription = await ctx.db.prescription.findUnique({
+        where: { id: input.prescriptionId },
+        select: { patientId: true },
+      });
+
+      if (!prescription) {
+        throw new Error("Prescrição não encontrada");
+      }
+
+      // Get all injections for this patient that are related to this prescription period
+      return ctx.db.injection.findMany({
+        where: { patientId: prescription.patientId },
+        include: {
+          appliedBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { scheduledDate: "desc" },
       });
     }),
 });

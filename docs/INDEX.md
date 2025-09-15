@@ -17,7 +17,7 @@ docs/
 │
 ├── architecture/               # 🏗️ Arquitetura
 │   ├── README.md               # Visão geral da arquitetura
-│   └── balance-system.md       # Sistema de saldo de injeções
+│   └── balance-system.md       # Sistema de restante de injeções
 │
 ├── api/                        # 🔌 API
 │   └── README.md               # Documentação da API
@@ -34,14 +34,14 @@ docs/
 ### 👨‍💻 Desenvolvedor
 
 1. [Schema do Banco](./database/schema.md)
-2. [Sistema de Saldo](./architecture/balance-system.md)
+2. [Sistema de Restante](./architecture/balance-system.md)
 3. [API Reference](./api/README.md)
 4. [Deploy Guide](./deployment/README.md)
 
 ### 👨‍⚕️ Médico
 
 1. [Guia do Usuário](./user-guide/README.md)
-2. [Sistema de Saldo](./architecture/balance-system.md)
+2. [Sistema de Restante](./architecture/balance-system.md)
 3. [Gerenciamento de Pacientes](./user-guide/patient-management.md)
 
 ### 👩‍⚕️ Enfermeiro
@@ -85,7 +85,7 @@ docs/
 
 ### Conceitos Importantes
 
-- **Sistema de Saldo**: [balance-system.md](./architecture/balance-system.md)
+- **Sistema de Restante**: [balance-system.md](./architecture/balance-system.md)
 - **Schema Prisma**: [schema.md](./database/schema.md)
 - **Migrações**: [migrations.md](./database/migrations.md)
 - **Deploy**: [deployment/README.md](./deployment/README.md)

@@ -4,6 +4,15 @@ import { type Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { PatientIndicationForm } from "~/components/forms/PatientIndicationForm";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { type PatientIndicationFormData } from "~/lib/schemas/patient";
 import { api } from "~/trpc/react";
@@ -52,6 +61,15 @@ export function NewPrescriptionForm({
 }: NewPrescriptionFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [alertDialog, setAlertDialog] = useState<{
+    open: boolean;
+    title: string;
+    description: string;
+  }>({
+    open: false,
+    title: "",
+    description: "",
+  });
 
   const createPrescription =
     api.prescriptions.createPatientIndication.useMutation({
@@ -127,11 +145,20 @@ export function NewPrescriptionForm({
       // Open PDF in new window
       const newWindow = window.open(blobUrl, "_blank");
       if (!newWindow) {
-        alert("Por favor, permita pop-ups para visualizar o PDF.");
+        setAlertDialog({
+          open: true,
+          title: "Pop-up bloqueado",
+          description: "Por favor, permita pop-ups para visualizar o PDF.",
+        });
       }
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Erro ao gerar PDF. Verifique o console para mais detalhes.");
+      setAlertDialog({
+        open: true,
+        title: "Erro ao gerar PDF",
+        description:
+          "Erro ao gerar PDF. Verifique o console para mais detalhes.",
+      });
     }
   };
 
@@ -149,6 +176,27 @@ export function NewPrescriptionForm({
           swalisClassifications={swalisClassifications}
         />
       </CardContent>
+
+      <AlertDialog
+        open={alertDialog.open}
+        onOpenChange={(open) => setAlertDialog({ ...alertDialog, open })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alertDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {alertDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => setAlertDialog({ ...alertDialog, open: false })}
+            >
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

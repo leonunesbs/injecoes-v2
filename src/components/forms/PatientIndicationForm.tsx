@@ -513,7 +513,7 @@ export function PatientIndicationForm({
                 <FormDescription className="mb-4">
                   {selectedIndication
                     ? `Injeções para OD no tratamento de ${selectedIndication.name}`
-                    : "Número de injeções a serem adicionadas ao saldo do olho direito"}
+                    : "Número de injeções a serem adicionadas ao restante do olho direito"}
                 </FormDescription>
                 <div className="flex flex-wrap gap-2">
                   {[0, 1, 2, 3].map((quantity) => (
@@ -577,7 +577,7 @@ export function PatientIndicationForm({
                 <FormDescription className="mb-4">
                   {selectedIndication
                     ? `Injeções para OE no tratamento de ${selectedIndication.name}`
-                    : "Número de injeções a serem adicionadas ao saldo do olho esquerdo"}
+                    : "Número de injeções a serem adicionadas ao restante do olho esquerdo"}
                 </FormDescription>
                 <div className="flex flex-wrap gap-2">
                   {[0, 1, 2, 3].map((quantity) => (

@@ -127,9 +127,9 @@ model Patient {
     phone     String?
     email     String?
 
-    // Sistema de saldo de injeções (recarregável a cada consulta)
-    balanceOD         Int @default(0) // Saldo atual de injeções OD
-    balanceOS         Int @default(0) // Saldo atual de injeções OS
+    // Sistema de restante de injeções (recarregável a cada consulta)
+    balanceOD         Int @default(0) // Restante atual de injeções OD
+    balanceOS         Int @default(0) // Restante atual de injeções OS
     totalPrescribedOD Int @default(0) // Total prescrito OD (histórico)
     totalPrescribedOS Int @default(0) // Total prescrito OS (histórico)
     totalAppliedOD    Int @default(0) // Total aplicado OD (histórico)
@@ -238,7 +238,7 @@ model Injection {
 
 // Status das prescrições
 enum PrescriptionStatus {
-    ACTIVE // Ativa (saldo disponível)
+    ACTIVE // Ativa (restante disponível)
     COMPLETED // Completa (todas as injeções aplicadas)
     CANCELLED // Cancelada
     EXPIRED // Expirada

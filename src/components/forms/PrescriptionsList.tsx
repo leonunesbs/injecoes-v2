@@ -28,6 +28,15 @@ import {
   Plus,
   Settings2,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "~/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import {
   DropdownMenu,
@@ -218,6 +227,15 @@ function DataTableToolbar({
   table: TanStackTable<Prescription>;
   prescriptions: Prescription[];
 }) {
+  const [alertDialog, setAlertDialog] = React.useState<{
+    open: boolean;
+    title: string;
+    description: string;
+  }>({
+    open: false,
+    title: "",
+    description: "",
+  });
   // Get unique indications for the filter dropdown
   const uniqueIndications = React.useMemo(() => {
     const indications = prescriptions
@@ -295,7 +313,11 @@ function DataTableToolbar({
         // Open PDF in new window
         const newWindow = window.open(blobUrl, "_blank");
         if (!newWindow) {
-          alert("Por favor, permita pop-ups para visualizar o PDF.");
+          setAlertDialog({
+            open: true,
+            title: "Pop-up bloqueado",
+            description: "Por favor, permita pop-ups para visualizar o PDF.",
+          });
         }
       } else {
         // Multiple prescriptions - use the new function
@@ -308,12 +330,21 @@ function DataTableToolbar({
         // Open PDF in new window
         const newWindow = window.open(blobUrl, "_blank");
         if (!newWindow) {
-          alert("Por favor, permita pop-ups para visualizar o PDF.");
+          setAlertDialog({
+            open: true,
+            title: "Pop-up bloqueado",
+            description: "Por favor, permita pop-ups para visualizar o PDF.",
+          });
         }
       }
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
-      alert("Erro ao gerar PDF. Verifique o console para mais detalhes.");
+      setAlertDialog({
+        open: true,
+        title: "Erro ao gerar PDF",
+        description:
+          "Erro ao gerar PDF. Verifique o console para mais detalhes.",
+      });
     }
   };
 
@@ -388,6 +419,27 @@ function DataTableToolbar({
         </Button>
         <DataTableViewOptions table={table} />
       </div>
+
+      <AlertDialog
+        open={alertDialog.open}
+        onOpenChange={(open) => setAlertDialog({ ...alertDialog, open })}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{alertDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {alertDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => setAlertDialog({ ...alertDialog, open: false })}
+            >
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -537,7 +589,12 @@ const columns: ColumnDef<Prescription>[] = [
     header: "Paciente",
     cell: ({ row }) => (
       <div>
-        <div className="font-medium">{row.original.patient.name}</div>
+        <Link
+          href={`/patients/${row.original.patient.id}`}
+          className="font-medium hover:underline"
+        >
+          {row.original.patient.name}
+        </Link>
         <div className="text-muted-foreground text-sm">
           ID: {row.original.patient.refId}
         </div>
@@ -550,7 +607,12 @@ const columns: ColumnDef<Prescription>[] = [
     header: "Indicação",
     cell: ({ row }) => (
       <div>
-        <div className="font-medium">{row.original.indication?.name}</div>
+        <Link
+          href={`/prescriptions/${row.original.id}`}
+          className="font-medium hover:underline"
+        >
+          {row.original.indication?.name}
+        </Link>
         <div className="text-muted-foreground text-sm">
           {row.original.indication?.code}
         </div>

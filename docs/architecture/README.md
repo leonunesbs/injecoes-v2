@@ -4,7 +4,7 @@ Documentação da arquitetura e design do sistema de injeções oftalmológicas.
 
 ## 📋 Conteúdo
 
-- **[Sistema de Saldo](./balance-system.md)** - Fluxo completo do sistema de saldo de injeções
+- **[Sistema de Restante](./balance-system.md)** - Fluxo completo do sistema de restante de injeções
 - **[Design Patterns](./design-patterns.md)** - Padrões de design utilizados
 - **[Data Flow](./data-flow.md)** - Fluxo de dados no sistema
 
@@ -49,13 +49,13 @@ Frontend → tRPC → Prisma → PostgreSQL
 ### 3. Prescrição de Injeções
 
 ```
-Consulta → Prescrição → Atualização de Saldo
+Consulta → Prescrição → Atualização de Restante
 ```
 
 ### 4. Aplicação de Injeções
 
 ```
-Agendamento → Aplicação → Decremento de Saldo
+Agendamento → Aplicação → Decremento de Restante
 ```
 
 ## 🎯 Estrutura de Navegação

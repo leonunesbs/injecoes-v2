@@ -19,8 +19,8 @@ export const patientSettingsSchema = z.object({
   swalisId: z.string().min(1, "Classificação Swalis é obrigatória"),
   indicationOther: z.string().optional(),
   medicationOther: z.string().optional(),
-  balanceOD: z.number().min(0, "Saldo OD não pode ser negativo").default(0),
-  balanceOS: z.number().min(0, "Saldo OS não pode ser negativo").default(0),
+  balanceOD: z.number().min(0, "Restante OD não pode ser negativo").default(0),
+  balanceOS: z.number().min(0, "Restante OS não pode ser negativo").default(0),
   startWithOD: z.boolean().default(true),
   isActive: z.boolean().default(true),
 });
@@ -52,3 +52,18 @@ export const patientIndicationSchema = z.object({
 });
 
 export type PatientIndicationFormData = z.infer<typeof patientIndicationSchema>;
+
+// Patient Basic Info Update Schema
+export const patientBasicInfoSchema = z.object({
+  refId: z
+    .string()
+    .min(1, "ID de referência é obrigatório")
+    .max(20, "ID de referência deve ter no máximo 20 caracteres"),
+  name: z
+    .string()
+    .min(1, "Nome é obrigatório")
+    .max(100, "Nome deve ter no máximo 100 caracteres"),
+  birthDate: z.date().optional(),
+});
+
+export type PatientBasicInfoFormData = z.infer<typeof patientBasicInfoSchema>;

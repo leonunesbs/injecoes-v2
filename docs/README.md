@@ -16,7 +16,7 @@ Documentação relacionada ao banco de dados e schema.
 
 Documentação da arquitetura e design do sistema.
 
-- **[Sistema de Saldo](./architecture/balance-system.md)** - Fluxo completo do sistema de saldo de injeções
+- **[Sistema de Restante](./architecture/balance-system.md)** - Fluxo completo do sistema de restante de injeções
 - **Design Patterns** - Padrões de design utilizados
 - **Data Flow** - Fluxo de dados no sistema
 
@@ -52,7 +52,7 @@ Guias para usuários finais.
 ### Para Desenvolvedores
 
 1. Leia a [documentação do schema](./database/schema.md)
-2. Entenda o [sistema de saldo](./architecture/balance-system.md)
+2. Entenda o [sistema de restante](./architecture/balance-system.md)
 3. Configure o ambiente seguindo o [guia de deploy](./deployment/)
 
 ### Para Usuários
@@ -65,7 +65,7 @@ Guias para usuários finais.
 
 ### Conceitos Fundamentais
 
-- [Sistema de Saldo de Injeções](./architecture/balance-system.md)
+- [Sistema de Restante de Injeções](./architecture/balance-system.md)
 - [Schema do Banco de Dados](./database/schema.md)
 - [Fluxo de Dados](./architecture/data-flow.md)
 

@@ -159,11 +159,11 @@ export default async function DashboardPage() {
                       {Math.round(profile.complianceRate)}%
                     </Badge>
                     {profile.complianceRate >= 80 ? (
-                      <CheckCircle className="h-3 w-3 flex-shrink-0 text-green-500" />
+                      <CheckCircle className="h-3 w-3 flex-shrink-0" />
                     ) : profile.complianceRate < 60 ? (
-                      <AlertCircle className="h-3 w-3 flex-shrink-0 text-red-500" />
+                      <AlertCircle className="h-3 w-3 flex-shrink-0" />
                     ) : (
-                      <Eye className="h-3 w-3 flex-shrink-0 text-yellow-500" />
+                      <Eye className="h-3 w-3 flex-shrink-0" />
                     )}
                   </div>
                 </div>

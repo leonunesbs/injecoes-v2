@@ -37,7 +37,7 @@ npx prisma migrate status
 
 ### 2. Injection System v2.0
 
-- Adição do sistema de saldo
+- Adição do sistema de restante
 - Modelos de consulta e prescrição
 - Otimizações para dashboard
 

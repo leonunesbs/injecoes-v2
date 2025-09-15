@@ -4,6 +4,7 @@ import type { Prisma } from "@prisma/client";
 import { Check, Pencil, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Switch } from "~/components/ui/switch";
@@ -69,7 +70,7 @@ export function IndicationTable({ data }: IndicationTableProps) {
     setEditData({
       code: item.code,
       name: item.name,
-      description: item.description || "",
+      description: item.description ?? "",
       isActive: item.isActive,
     });
   };
@@ -152,7 +153,7 @@ export function IndicationTable({ data }: IndicationTableProps) {
                   />
                 ) : (
                   <span className="text-muted-foreground">
-                    {item.description || "Sem descrição"}
+                    {item.description ?? "Sem descrição"}
                   </span>
                 )}
               </TableCell>
@@ -165,15 +166,9 @@ export function IndicationTable({ data }: IndicationTableProps) {
                     }
                   />
                 ) : (
-                  <span
-                    className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      item.isActive
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
+                  <Badge variant={item.isActive ? "default" : "destructive"}>
                     {item.isActive ? "Ativo" : "Inativo"}
-                  </span>
+                  </Badge>
                 )}
               </TableCell>
               <TableCell>

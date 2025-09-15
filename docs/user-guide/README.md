@@ -59,7 +59,7 @@ Guias completos para usuários finais do sistema de injeções oftalmológicas.
 
 - Total de pacientes ativos
 - Injeções aplicadas hoje
-- Pacientes com saldo baixo
+- Pacientes com restante baixo
 - Próximas consultas
 
 ### Gráficos
@@ -82,7 +82,7 @@ Guias completos para usuários finais do sistema de injeções oftalmológicas.
 
 - Cadastro completo
 - Histórico médico
-- Controle de saldo
+- Controle de restante
 - Agendamentos
 
 ### Sistema de Injeções
@@ -111,7 +111,7 @@ Guias completos para usuários finais do sistema de injeções oftalmológicas.
 ### Funcionalidades Mobile
 
 - Aplicação rápida de injeções
-- Consulta de saldos
+- Consulta de restantes
 - Notificações push
 - Sincronização automática
 
