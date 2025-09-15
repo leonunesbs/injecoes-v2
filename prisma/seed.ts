@@ -3,14 +3,14 @@ import { db } from "~/server/db";
 // Dados padrão para Indicações Médicas
 const indications = [
   {
-    code: "RD_EMD",
+    code: "RD/EMD",
     name: "Retinopatia Diabética com Edema Macular Diabético",
     description:
       "Complicação da diabetes que afeta a mácula, causando edema e perda de visão central",
     isActive: true,
   },
   {
-    code: "RD_HV",
+    code: "RD/HV",
     name: "Retinopatia Diabética com Hemorragia Vítrea",
     description:
       "Complicação da diabetes caracterizada por sangramento no vítreo",
@@ -57,30 +57,6 @@ const medications = [
     code: "EYLIA",
     name: "Eylia",
     activeSubstance: "Aflibercept",
-    isActive: true,
-  },
-  {
-    code: "BEVACIZUMAB",
-    name: "Bevacizumab",
-    activeSubstance: "Bevacizumab",
-    isActive: true,
-  },
-  {
-    code: "RANIBIZUMAB",
-    name: "Ranibizumab",
-    activeSubstance: "Ranibizumab",
-    isActive: true,
-  },
-  {
-    code: "AFLIBERCEPT",
-    name: "Aflibercept",
-    activeSubstance: "Aflibercept",
-    isActive: true,
-  },
-  {
-    code: "OUTRO",
-    name: "Outro",
-    activeSubstance: "Personalizado",
     isActive: true,
   },
 ];
