@@ -1,0 +1,342 @@
+"use client";
+
+import {
+  BarChart3,
+  Bell,
+  FileText,
+  LogOut,
+  Menu,
+  Settings,
+  Syringe,
+  User,
+  Users,
+} from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "~/components/ui/sheet";
+
+import Link from "next/link";
+import { Badge } from "~/components/ui/badge";
+import { Button } from "~/components/ui/button";
+
+interface LandingLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function LandingLayout({ children }: LandingLayoutProps) {
+  return (
+    <div className="bg-background min-h-screen">
+      {/* Header */}
+      <header className="bg-background/95 sticky top-0 z-50 w-full border-b shadow-sm backdrop-blur-md">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="flex h-16 items-center justify-between sm:h-18">
+            {/* Logo e Título */}
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-xl shadow-lg sm:h-12 sm:w-12">
+                <Syringe className="h-5 w-5 sm:h-7 sm:w-7" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h1 className="text-foreground text-lg font-bold sm:text-xl">
+                  <span className="hidden sm:inline">Sistema de Injeções</span>
+                  <span className="sm:hidden">Sistema</span>
+                </h1>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  <span className="hidden sm:inline">
+                    Gerenciamento Intravítreo
+                  </span>
+                  <span className="sm:hidden">Injeções</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Navegação Desktop */}
+            <nav className="hidden items-center space-x-6 lg:space-x-8 xl:flex">
+              <Link
+                href="/prescriptions"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Prescrições
+              </Link>
+              <Link
+                href="/patients"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Pacientes
+              </Link>
+              <Link
+                href="/dashboard"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/settings"
+                className="text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+              >
+                Configurações
+              </Link>
+            </nav>
+
+            {/* Ações do Usuário */}
+            <div className="flex items-center space-x-1 sm:space-x-4">
+              {/* Notificações - Ocultar em telas muito pequenas */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative hidden h-9 w-9 sm:flex sm:h-10 sm:w-10"
+              >
+                <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full p-0 text-xs sm:h-5 sm:w-5"
+                >
+                  3
+                </Badge>
+              </Button>
+
+              {/* Menu do Usuário - Simplificado em mobile */}
+              <div className="flex items-center space-x-1 sm:space-x-3">
+                <div className="flex items-center space-x-1 sm:space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 sm:h-10 sm:w-10"
+                  >
+                    <User className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden h-9 w-9 sm:flex sm:h-10 sm:w-10"
+                  >
+                    <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 sm:h-10 sm:w-10"
+                    asChild
+                  >
+                    <Link href="/api/auth/signout">
+                      <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Menu Mobile */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 sm:h-10 sm:w-10 xl:hidden"
+                  >
+                    <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                  <SheetHeader>
+                    <SheetTitle className="flex items-center space-x-3">
+                      <div className="bg-primary text-primary-foreground flex h-10 w-10 items-center justify-center rounded-xl shadow-lg">
+                        <Syringe className="h-6 w-6" />
+                      </div>
+                      <div>
+                        <h2 className="text-lg font-bold">
+                          Sistema de Injeções
+                        </h2>
+                        <p className="text-muted-foreground text-sm">
+                          Navegação
+                        </p>
+                      </div>
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-6 space-y-4">
+                    <nav className="space-y-2">
+                      <Link
+                        href="/prescriptions"
+                        className="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center rounded-lg px-3 py-3 text-sm font-medium transition-colors"
+                      >
+                        <FileText className="mr-3 h-5 w-5" />
+                        Prescrições
+                      </Link>
+                      <Link
+                        href="/patients"
+                        className="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center rounded-lg px-3 py-3 text-sm font-medium transition-colors"
+                      >
+                        <Users className="mr-3 h-5 w-5" />
+                        Pacientes
+                      </Link>
+                      <Link
+                        href="/dashboard"
+                        className="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center rounded-lg px-3 py-3 text-sm font-medium transition-colors"
+                      >
+                        <BarChart3 className="mr-3 h-5 w-5" />
+                        Dashboard
+                      </Link>
+                      <Link
+                        href="/settings"
+                        className="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center rounded-lg px-3 py-3 text-sm font-medium transition-colors"
+                      >
+                        <Settings className="mr-3 h-5 w-5" />
+                        Configurações
+                      </Link>
+                    </nav>
+
+                    <div className="border-t pt-4">
+                      <div className="space-y-2">
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                          asChild
+                        >
+                          <Link href="/api/auth/signout">
+                            <LogOut className="mr-3 h-4 w-4" />
+                            Sair
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Conteúdo Principal */}
+      <main className="flex-1">{children}</main>
+
+      {/* Footer */}
+      <footer className="bg-muted/50 border-t shadow-sm backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-8 sm:px-6 sm:py-12 lg:px-12">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Informações do Sistema */}
+            <div className="space-y-4 sm:space-y-6">
+              <div className="flex items-center space-x-3">
+                <Syringe className="text-primary h-6 w-6 sm:h-7 sm:w-7" />
+                <span className="text-foreground text-base font-bold sm:text-lg">
+                  Sistema de Injeções
+                </span>
+              </div>
+              <p className="text-muted-foreground text-xs leading-relaxed sm:text-sm">
+                Plataforma especializada para gerenciamento de prescrições de
+                injeções intravítreas com foco em eficiência e precisão.
+              </p>
+            </div>
+
+            {/* Links Rápidos */}
+            <div className="space-y-4 sm:space-y-6">
+              <h3 className="text-foreground text-base font-semibold sm:text-lg">
+                Acesso Rápido
+              </h3>
+              <div className="space-y-2 sm:space-y-3">
+                <Link
+                  href="/prescriptions/new"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Nova Prescrição
+                </Link>
+                <Link
+                  href="/prescriptions"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Lista de Prescrições
+                </Link>
+                <Link
+                  href="/patients"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Pacientes
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Dashboard
+                </Link>
+              </div>
+            </div>
+
+            {/* Relatórios */}
+            <div className="space-y-4 sm:space-y-6">
+              <h3 className="text-foreground text-base font-semibold sm:text-lg">
+                Relatórios
+              </h3>
+              <div className="space-y-2 sm:space-y-3">
+                <a
+                  href="https://antivegf.seoft.com.br/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Relatório Principal
+                </a>
+                <Link
+                  href="/dashboard"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Análises Clínicas
+                </Link>
+                <Link
+                  href="/settings"
+                  className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                >
+                  Configurações
+                </Link>
+              </div>
+            </div>
+
+            {/* Suporte */}
+            <div className="space-y-4 sm:space-y-6">
+              <h3 className="text-foreground text-base font-semibold sm:text-lg">
+                Suporte
+              </h3>
+              <div className="space-y-2 sm:space-y-3">
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Versão 2.0.0
+                </p>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Última atualização: {new Date().toLocaleDateString("pt-BR")}
+                </p>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Sistema interno - Uso restrito
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Copyright */}
+          <div className="mt-6 border-t pt-4 sm:mt-8">
+            <p className="text-muted-foreground text-center text-xs sm:text-sm">
+              © {new Date().getFullYear()} Sistema de Injeções. Todos os
+              direitos reservados.
+            </p>
+          </div>
+
+          {/* Créditos do Desenvolvedor */}
+          <div className="mt-4">
+            <div className="flex">
+              <span className="bg-primary text-primary-foreground w-full rounded-lg py-2 text-center text-xs">
+                Coded with ❤️ by{" "}
+                <Link
+                  href="https://instagram.com/leonunesbs"
+                  className="font-bold hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  @leonunesbs
+                </Link>
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
