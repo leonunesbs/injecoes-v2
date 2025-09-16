@@ -121,8 +121,14 @@ export function NewPrescriptionForm({
       const patientData: PatientData = {
         refId: data.patientRefId.toString(),
         name: data.patientName,
-        indication: data.indicationOther ?? selectedIndication?.name ?? "",
-        medication: data.medicationOther ?? selectedMedication?.name ?? "",
+        indication:
+          data.indicationOther && data.indicationOther.trim() !== ""
+            ? data.indicationOther
+            : (selectedIndication?.name ?? ""),
+        medication:
+          data.medicationOther && data.medicationOther.trim() !== ""
+            ? data.medicationOther
+            : (selectedMedication?.name ?? ""),
         swalisClassification: selectedSwalis?.code ?? "",
         observations: data.observations ?? "",
         remainingOD: data.indicationOD,
