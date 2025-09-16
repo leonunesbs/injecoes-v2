@@ -7,13 +7,8 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Button } from "~/components/ui/button";
-
-async function backToSignInAction() {
-  "use server";
-  redirect("/login");
-}
 
 export default function VerifyRequestPage() {
   return (
@@ -56,11 +51,9 @@ export default function VerifyRequestPage() {
               </p>
             </div>
 
-            <form action={backToSignInAction}>
-              <Button type="submit" variant="outline" className="w-full">
-                Back to sign in
-              </Button>
-            </form>
+            <Button asChild variant="outline" className="w-full">
+              <Link href="/login">Back to sign in</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>
