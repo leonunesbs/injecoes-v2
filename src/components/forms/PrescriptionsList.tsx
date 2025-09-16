@@ -356,7 +356,7 @@ function DataTableToolbar({
           placeholder="Buscar por nome ou prontuário..."
           value={(table.getState().globalFilter as string) ?? ""}
           onChange={(event) => table.setGlobalFilter(event.target.value)}
-          className="w-full pl-10 sm:w-80"
+          className="w-full sm:w-80"
         />
         <Select
           value={
