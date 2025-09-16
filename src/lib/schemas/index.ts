@@ -5,3 +5,4 @@ export * from "./medication";
 export * from "./patient";
 export * from "./prescription";
 export * from "./swalis";
+export * from "./user";

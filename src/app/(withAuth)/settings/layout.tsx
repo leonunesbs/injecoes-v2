@@ -17,6 +17,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     if (pathname.includes("/indications")) return "indications";
     if (pathname.includes("/medications")) return "medications";
     if (pathname.includes("/swalis")) return "swalis";
+    if (pathname.includes("/users")) return "users";
     return "indications"; // default
   };
 
@@ -32,15 +33,42 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
       </div>
 
       <Tabs value={getActiveTab()} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="indications" asChild>
-            <Link href="/settings/indications">Indicações</Link>
+        <TabsList className="bg-muted/50 grid h-auto w-full grid-cols-2 gap-1 p-1 lg:grid-cols-4">
+          <TabsTrigger
+            value="indications"
+            asChild
+            className="h-auto min-h-[36px] flex-1 px-2 py-2 text-xs sm:text-sm"
+          >
+            <Link href="/settings/indications" className="w-full text-center">
+              Indicações
+            </Link>
           </TabsTrigger>
-          <TabsTrigger value="medications" asChild>
-            <Link href="/settings/medications">Medicamentos</Link>
+          <TabsTrigger
+            value="medications"
+            asChild
+            className="h-auto min-h-[36px] flex-1 px-2 py-2 text-xs sm:text-sm"
+          >
+            <Link href="/settings/medications" className="w-full text-center">
+              Medicamentos
+            </Link>
           </TabsTrigger>
-          <TabsTrigger value="swalis" asChild>
-            <Link href="/settings/swalis">Swalis</Link>
+          <TabsTrigger
+            value="swalis"
+            asChild
+            className="h-auto min-h-[36px] flex-1 px-2 py-2 text-xs sm:text-sm"
+          >
+            <Link href="/settings/swalis" className="w-full text-center">
+              Swalis
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger
+            value="users"
+            asChild
+            className="h-auto min-h-[36px] flex-1 px-2 py-2 text-xs sm:text-sm"
+          >
+            <Link href="/settings/users" className="w-full text-center">
+              Usuários
+            </Link>
           </TabsTrigger>
         </TabsList>
 

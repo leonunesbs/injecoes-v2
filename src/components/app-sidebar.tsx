@@ -63,6 +63,10 @@ const data = {
           title: "Classificação Swalis",
           url: "/settings/swalis",
         },
+        {
+          title: "Usuários",
+          url: "/settings/users",
+        },
       ],
     },
   ],

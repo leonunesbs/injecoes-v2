@@ -3,6 +3,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { indicationSchema } from "~/lib/schemas/indication";
 import { medicationSchema } from "~/lib/schemas/medication";
 import { swalisClassificationSchema } from "~/lib/schemas/swalis";
+import { userSchema } from "~/lib/schemas/user";
 import { z } from "zod";
 
 export const settingsRouter = createTRPCRouter({
@@ -101,6 +102,39 @@ export const settingsRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       return ctx.db.swalisClassification.delete({
+        where: { id: input.id },
+      });
+    }),
+
+  // User CRUD operations
+  createUser: publicProcedure
+    .input(userSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.create({
+        data: input,
+      });
+    }),
+
+  getUsers: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.user.findMany({
+      orderBy: { name: "asc" },
+    });
+  }),
+
+  updateUser: publicProcedure
+    .input(userSchema.omit({ createdAt: true, updatedAt: true }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+      return ctx.db.user.update({
+        where: { id },
+        data,
+      });
+    }),
+
+  deleteUser: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.delete({
         where: { id: input.id },
       });
     }),
