@@ -1,8 +1,8 @@
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-import { z } from "zod";
-import { patientIndicationSchema } from "~/lib/schemas/patient";
+import { patientIndicationBaseSchema } from "~/lib/schemas/patient";
 import { prescriptionSchema } from "~/lib/schemas/prescription";
+import { z } from "zod";
 
 export const prescriptionsRouter = createTRPCRouter({
   // Create a new prescription for a patient
@@ -56,7 +56,7 @@ export const prescriptionsRouter = createTRPCRouter({
   // Create a new patient with indication (legacy method for backward compatibility)
   createPatientIndication: protectedProcedure
     .input(
-      patientIndicationSchema.omit({
+      patientIndicationBaseSchema.omit({
         id: true,
         createdAt: true,
         updatedAt: true,
@@ -72,12 +72,24 @@ export const prescriptionsRouter = createTRPCRouter({
 
       if (existingPatient) {
         // Se o paciente já existe, criar uma nova prescrição
+        if (!input.indicationId) {
+          throw new Error(
+            "Indicação é obrigatória para criar a prescrição do paciente existente",
+          );
+        }
+        if (!input.medicationId) {
+          throw new Error(
+            "Medicação é obrigatória para criar a prescrição do paciente existente",
+          );
+        }
+        const indicationId = input.indicationId;
+        const medicationId = input.medicationId;
         const prescription = await ctx.db.prescription.create({
           data: {
             patientId: existingPatient.id,
-            indicationId: input.indicationId,
+            indicationId,
             indicationOther: input.indicationOther,
-            medicationId: input.medicationId,
+            medicationId,
             medicationOther: input.medicationOther,
             swalisId: input.swalisId,
             prescribedOD: input.indicationOD,
@@ -116,12 +128,24 @@ export const prescriptionsRouter = createTRPCRouter({
         });
 
         // Criar prescrição para o novo paciente
+        if (!input.indicationId) {
+          throw new Error(
+            "Indicação é obrigatória para criar a prescrição do novo paciente",
+          );
+        }
+        if (!input.medicationId) {
+          throw new Error(
+            "Medicação é obrigatória para criar a prescrição do novo paciente",
+          );
+        }
+        const indicationId = input.indicationId;
+        const medicationId = input.medicationId;
         const prescription = await ctx.db.prescription.create({
           data: {
             patientId: patient.id,
-            indicationId: input.indicationId,
+            indicationId,
             indicationOther: input.indicationOther,
-            medicationId: input.medicationId,
+            medicationId,
             medicationOther: input.medicationOther,
             swalisId: input.swalisId,
             prescribedOD: input.indicationOD,
@@ -175,7 +199,7 @@ export const prescriptionsRouter = createTRPCRouter({
 
   // Update patient indication (adds to existing balance)
   updatePatientIndication: protectedProcedure
-    .input(patientIndicationSchema.omit({ createdAt: true }))
+    .input(patientIndicationBaseSchema.omit({ createdAt: true }))
     .mutation(async ({ ctx, input }) => {
       const { id, ...data } = input;
 
@@ -208,12 +232,20 @@ export const prescriptionsRouter = createTRPCRouter({
       });
 
       // Criar nova prescrição com as informações de indicação, medicação e swalis
+      if (!data.indicationId) {
+        throw new Error("Indicação é obrigatória para criar a prescrição");
+      }
+      if (!data.medicationId) {
+        throw new Error("Medicação é obrigatória para criar a prescrição");
+      }
+      const indicationId = data.indicationId;
+      const medicationId = data.medicationId;
       return ctx.db.prescription.create({
         data: {
           patientId: id,
-          indicationId: data.indicationId,
+          indicationId,
           indicationOther: data.indicationOther,
-          medicationId: data.medicationId,
+          medicationId,
           medicationOther: data.medicationOther,
           swalisId: data.swalisId,
           prescribedOD: data.indicationOD,

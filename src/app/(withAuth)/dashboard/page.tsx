@@ -7,6 +7,7 @@ import {
   Clock,
   Eye,
   FileText,
+  Plus,
   Syringe,
   TrendingUp,
   Users,
@@ -19,11 +20,12 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-import type { Metadata } from "next";
-import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
-import { db } from "~/server/db";
+import { Button } from "~/components/ui/button";
+import Link from "next/link";
+import type { Metadata } from "next";
 import { api } from "~/trpc/server";
+import { db } from "~/server/db";
 
 export const metadata: Metadata = {
   title: "Dashboard - Sistema de Injeções",
@@ -122,11 +124,20 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Análise crítica dos dados de indicações e perfil clínico das condições
-        </p>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Análise crítica dos dados de indicações e perfil clínico das
+            condições
+          </p>
+        </div>
+        <Button asChild size="sm" className="gap-2">
+          <Link href="/prescriptions/new">
+            <Plus className="h-4 w-4" />
+            Nova prescrição
+          </Link>
+        </Button>
       </div>
 
       {/* Estatísticas Gerais */}

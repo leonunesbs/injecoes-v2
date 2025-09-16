@@ -94,8 +94,11 @@ export function NewPrescriptionForm({
         medications,
         swalisClassifications,
       );
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Erro ao criar prescrição:", error);
+      setIsLoading(false);
     }
   };
 
@@ -120,7 +123,7 @@ export function NewPrescriptionForm({
       // Prepare data for PDF generation
       const patientData: PatientData = {
         refId: data.patientRefId.toString(),
-        name: data.patientName,
+        name: data.patientName.trim().toUpperCase(),
         indication:
           data.indicationOther && data.indicationOther.trim() !== ""
             ? data.indicationOther
