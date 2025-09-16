@@ -10,12 +10,12 @@ import {
   Syringe,
   User,
 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { useParams, useRouter } from "next/navigation";
 
-import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import Link from "next/link";
 import { Separator } from "~/components/ui/separator";
 import { Skeleton } from "~/components/ui/skeleton";
 import { api } from "~/trpc/react";
@@ -106,7 +106,7 @@ export default function PrescriptionPage() {
     injections?.filter((inj) => inj.status === "SCHEDULED") ?? [];
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className="container mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
