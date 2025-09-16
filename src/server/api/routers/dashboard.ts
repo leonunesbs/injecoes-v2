@@ -1,6 +1,6 @@
-import type { Injection, Patient } from "@prisma/client";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
+import type { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 // Tipos específicos para análises do dashboard
@@ -25,18 +25,77 @@ type MedicationApplicationData = {
   totalAppliedOS: number;
 };
 
+// Prisma-derived helper types for queried payloads
+type PatientWithInjections = Prisma.PatientGetPayload<{
+  include: {
+    injections: true;
+  };
+}>;
+
+// Helper result shapes for Prisma aggregations to satisfy strict lint rules
+type IndicationGroup = {
+  indicationId: string;
+  _count: { id: number };
+  _sum: { prescribedOD: number | null; prescribedOS: number | null };
+};
+
+type SwalisGroup = {
+  swalisId: string;
+  _count: { id: number };
+  _sum: { prescribedOD: number | null; prescribedOS: number | null };
+};
+
+type MedicationGroup = {
+  medicationId: string;
+  _count: { id: number };
+  _sum: { prescribedOD: number | null; prescribedOS: number | null };
+};
+
+type SwalisDistribution = {
+  swalisId: string;
+  _count: { id: number };
+};
+
+type IndicationApplicationRow = {
+  indicationId: string;
+  patient: {
+    totalAppliedOD: number;
+    totalAppliedOS: number;
+    balanceOD: number;
+    balanceOS: number;
+  };
+};
+
+type SwalisApplicationRow = {
+  swalisId: string;
+  patient: {
+    totalAppliedOD: number;
+    totalAppliedOS: number;
+    balanceOD: number;
+    balanceOS: number;
+  };
+};
+
+type MedicationApplicationRow = {
+  medicationId: string;
+  patient: {
+    totalAppliedOD: number;
+    totalAppliedOS: number;
+  };
+};
+
 export const dashboardRouter = createTRPCRouter({
   // Análise de perfil clínico das condições
   getClinicalProfileAnalysis: protectedProcedure.query(async ({ ctx }) => {
     // Análise de distribuição de indicações por tipo através de prescrições
-    const indicationAnalysis = await ctx.db.prescription.groupBy({
+    const indicationAnalysis = (await ctx.db.prescription.groupBy({
       by: ["indicationId"],
       _count: { id: true },
       _sum: {
         prescribedOD: true,
         prescribedOS: true,
       },
-    });
+    })) as IndicationGroup[];
 
     // Buscar detalhes das indicações
     const indicationDetails = await ctx.db.indication.findMany({
@@ -45,7 +104,7 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Buscar dados de aplicação por indicação
-    const indicationApplicationData = await ctx.db.prescription.findMany({
+    const indicationApplicationData = (await ctx.db.prescription.findMany({
       select: {
         indicationId: true,
         patient: {
@@ -57,7 +116,7 @@ export const dashboardRouter = createTRPCRouter({
           },
         },
       },
-    });
+    })) as IndicationApplicationRow[];
 
     // Agrupar dados de aplicação por indicação
     const applicationByIndication = indicationApplicationData.reduce(
@@ -151,14 +210,14 @@ export const dashboardRouter = createTRPCRouter({
     const totalInjections = await ctx.db.injection.count();
 
     // Análise por classificação Swalis através de prescrições
-    const swalisAnalysis = await ctx.db.prescription.groupBy({
+    const swalisAnalysis = (await ctx.db.prescription.groupBy({
       by: ["swalisId"],
       _count: { id: true },
       _sum: {
         prescribedOD: true,
         prescribedOS: true,
       },
-    });
+    })) as SwalisGroup[];
 
     // Buscar detalhes das classificações Swalis
     const swalisDetails = await ctx.db.swalisClassification.findMany({
@@ -174,7 +233,7 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Buscar dados de aplicação por Swalis
-    const swalisApplicationData = await ctx.db.prescription.findMany({
+    const swalisApplicationData = (await ctx.db.prescription.findMany({
       select: {
         swalisId: true,
         patient: {
@@ -186,7 +245,7 @@ export const dashboardRouter = createTRPCRouter({
           },
         },
       },
-    });
+    })) as SwalisApplicationRow[];
 
     // Agrupar dados de aplicação por Swalis
     const applicationBySwalis = swalisApplicationData.reduce(
@@ -245,14 +304,14 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Análise por medicamento através de prescrições
-    const medicationAnalysis = await ctx.db.prescription.groupBy({
+    const medicationAnalysis = (await ctx.db.prescription.groupBy({
       by: ["medicationId"],
       _count: { id: true },
       _sum: {
         prescribedOD: true,
         prescribedOS: true,
       },
-    });
+    })) as MedicationGroup[];
 
     const medicationDetails = await ctx.db.medication.findMany({
       where: { isActive: true },
@@ -260,7 +319,7 @@ export const dashboardRouter = createTRPCRouter({
     });
 
     // Buscar dados de aplicação por medicamento
-    const medicationApplicationData = await ctx.db.prescription.findMany({
+    const medicationApplicationData = (await ctx.db.prescription.findMany({
       select: {
         medicationId: true,
         patient: {
@@ -270,7 +329,7 @@ export const dashboardRouter = createTRPCRouter({
           },
         },
       },
-    });
+    })) as MedicationApplicationRow[];
 
     // Agrupar dados de aplicação por medicamento
     const applicationByMedication = medicationApplicationData.reduce(
@@ -451,10 +510,7 @@ export const dashboardRouter = createTRPCRouter({
 
     const indicationStats = indicationIntervalStats.map((indication) => {
       // Extrair pacientes únicos das prescrições
-      const uniquePatients = new Map<
-        string,
-        Patient & { injections: Injection[] }
-      >();
+      const uniquePatients = new Map<string, PatientWithInjections>();
       indication.prescriptions.forEach((prescription) => {
         if (
           prescription.patient &&
@@ -737,10 +793,10 @@ export const dashboardRouter = createTRPCRouter({
     ]);
 
     // Pacientes por classificação Swalis através de prescrições
-    const swalisDistribution = await ctx.db.prescription.groupBy({
+    const swalisDistribution = (await ctx.db.prescription.groupBy({
       by: ["swalisId"],
       _count: { id: true },
-    });
+    })) as SwalisDistribution[];
 
     const swalisDetails = await ctx.db.swalisClassification.findMany({
       where: { isActive: true },
