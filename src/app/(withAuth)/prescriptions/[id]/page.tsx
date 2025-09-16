@@ -19,9 +19,9 @@ import { api } from "~/trpc/server";
 export default async function PrescriptionPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const prescriptionId = params.id;
+  const prescriptionId = (await params).id;
   const prescription = await api.prescriptions.getPrescriptionById({
     id: prescriptionId,
   });
