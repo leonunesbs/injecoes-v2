@@ -7,7 +7,13 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
+import { redirect } from "next/navigation";
 import { Button } from "~/components/ui/button";
+
+async function backToSignInAction() {
+  "use server";
+  redirect("/login");
+}
 
 export default function VerifyRequestPage() {
   return (
@@ -50,13 +56,11 @@ export default function VerifyRequestPage() {
               </p>
             </div>
 
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => window.history.back()}
-            >
-              Back to sign in
-            </Button>
+            <form action={backToSignInAction}>
+              <Button type="submit" variant="outline" className="w-full">
+                Back to sign in
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>
