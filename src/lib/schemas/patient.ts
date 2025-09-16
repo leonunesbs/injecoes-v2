@@ -63,7 +63,7 @@ export const patientBasicInfoSchema = z.object({
     .string()
     .min(1, "Nome é obrigatório")
     .max(100, "Nome deve ter no máximo 100 caracteres"),
-  birthDate: z.date().optional(),
+  birthDate: z.date().nullable().optional(),
 });
 
 export type PatientBasicInfoFormData = z.infer<typeof patientBasicInfoSchema>;

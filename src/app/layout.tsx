@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 import { Geist } from "next/font/google";
 import { Toaster } from "sonner";
 
@@ -8,10 +8,88 @@ import { ThemeProvider } from "~/components/theme-provider";
 import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
-  title: "Sistema de Injeções",
+  metadataBase: new URL("https://injecoes.seoft.app"),
+  applicationName: "Injecções",
+  title: {
+    default: "Injecções",
+    template: "%s | Injecções",
+  },
   description:
-    "Sistema de gerenciamento de prescrições de injeções intravítreas",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+    "Gerenciamento AntiVEGF: prescrições e aplicações intravítreas com eficiência.",
+  keywords: [
+    "AntiVEGF",
+    "injeções intravítreas",
+    "oftalmologia",
+    "retina",
+    "prescrições",
+    "gestão clínica",
+    "ranibizumabe",
+    "bevacizumabe",
+    "aflibercepte",
+  ],
+  authors: [{ name: "Injecções" }],
+  creator: "Injecções",
+  publisher: "Injecções",
+  generator: "Next.js",
+  category: "Saúde",
+  referrer: "origin-when-cross-origin",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Injecções — Gerenciamento AntiVEGF",
+    title: "Injecções",
+    description:
+      "Gerenciamento AntiVEGF: prescrições e aplicações intravítreas com eficiência.",
+    locale: "pt_BR",
+    images: [
+      { url: "/logo.jpg" },
+      { url: "/android-chrome-512x512.png", width: 512, height: 512 },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Injecções",
+    description:
+      "Gerenciamento AntiVEGF: prescrições e aplicações intravítreas com eficiência.",
+    images: ["/logo.jpg"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { rel: "mask-icon", url: "/safari-pinned-tab.svg", color: "#000000" },
+      { rel: "manifest", url: "/site.webmanifest" },
+    ],
+  },
+  manifest: "/site.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
 };
 
 const geist = Geist({

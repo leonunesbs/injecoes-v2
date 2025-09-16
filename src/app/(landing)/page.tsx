@@ -15,9 +15,30 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
+import type { Metadata } from "next";
+import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { HydrateClient } from "~/trpc/server";
-import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Início",
+  description:
+    "Injecções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Início",
+    description:
+      "Injecções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
+    url: "/",
+    type: "website",
+  },
+  twitter: {
+    title: "Início",
+    description:
+      "Injecções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
+    card: "summary_large_image",
+  },
+};
 
 export default async function LandingPage() {
   const mainActions = [
@@ -38,7 +59,7 @@ export default async function LandingPage() {
     {
       title: "Gerar Relatório",
       description: "Acessar relatórios detalhados do sistema",
-      href: "https://antivegf.seoft.com.br/",
+      href: "https://injecoes.seoft.app",
       icon: BarChart3,
       variant: "outline" as const,
       external: true,

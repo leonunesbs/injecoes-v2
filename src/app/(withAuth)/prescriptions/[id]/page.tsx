@@ -1,9 +1,6 @@
-"use client";
-
 import {
   Activity,
   AlertCircle,
-  ArrowLeft,
   Calendar,
   Eye,
   FileText,
@@ -11,52 +8,26 @@ import {
   User,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import { useParams, useRouter } from "next/navigation";
 
+import Link from "next/link";
+import { BackButton } from "~/components/BackButton";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import Link from "next/link";
 import { Separator } from "~/components/ui/separator";
-import { Skeleton } from "~/components/ui/skeleton";
-import { api } from "~/trpc/react";
+import { api } from "~/trpc/server";
 
-export default function PrescriptionPage() {
-  const params = useParams();
-  const router = useRouter();
-  const prescriptionId = params.id as string;
-
-  const { data: prescription, isLoading } =
-    api.prescriptions.getPrescriptionById.useQuery(
-      { id: prescriptionId },
-      { enabled: !!prescriptionId },
-    );
-
-  const { data: injections, isLoading: injectionsLoading } =
-    api.prescriptions.getInjectionsByPrescription.useQuery(
-      { prescriptionId },
-      { enabled: !!prescriptionId },
-    );
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto space-y-6 p-6">
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-10" />
-          <Skeleton className="h-8 w-64" />
-        </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          <Skeleton className="h-64" />
-          <Skeleton className="h-64" />
-        </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-        </div>
-        <Skeleton className="h-64" />
-      </div>
-    );
-  }
+export default async function PrescriptionPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const prescriptionId = params.id;
+  const prescription = await api.prescriptions.getPrescriptionById({
+    id: prescriptionId,
+  });
+  const injections = await api.prescriptions.getInjectionsByPrescription({
+    prescriptionId,
+  });
 
   if (!prescription) {
     return (
@@ -71,7 +42,7 @@ export default function PrescriptionPage() {
               <p className="text-muted-foreground mb-4">
                 A prescrição solicitada não foi encontrada ou não existe.
               </p>
-              <Button onClick={() => router.back()}>Voltar</Button>
+              <BackButton />
             </div>
           </CardContent>
         </Card>
@@ -95,24 +66,22 @@ export default function PrescriptionPage() {
   };
 
   const getSwalisBadgeVariant = (priority: number) => {
-    if (priority <= 2) return "destructive";
-    if (priority <= 4) return "secondary";
-    return "default";
+    if (priority <= 2) return "destructive" as const;
+    if (priority <= 4) return "secondary" as const;
+    return "default" as const;
   };
 
-  const appliedInjections =
-    injections?.filter((inj) => inj.status === "APPLIED") ?? [];
-  const scheduledInjections =
-    injections?.filter((inj) => inj.status === "SCHEDULED") ?? [];
+  const appliedInjections = (injections ?? []).filter(
+    (inj) => inj.status === "APPLIED",
+  );
+  const scheduledInjections = (injections ?? []).filter(
+    (inj) => inj.status === "SCHEDULED",
+  );
 
   return (
     <div className="container mx-auto space-y-6">
-      {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => router.back()}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar
-        </Button>
+        <BackButton />
         <div>
           <h1 className="text-3xl font-bold">Detalhes da Prescrição</h1>
           <p className="text-muted-foreground">
@@ -123,7 +92,6 @@ export default function PrescriptionPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {/* Patient Information Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -184,7 +152,6 @@ export default function PrescriptionPage() {
           </CardContent>
         </Card>
 
-        {/* Prescription Details Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -247,7 +214,6 @@ export default function PrescriptionPage() {
         </Card>
       </div>
 
-      {/* Prescription Quantities and Statistics */}
       <div className="grid gap-6 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
@@ -321,7 +287,6 @@ export default function PrescriptionPage() {
         </Card>
       </div>
 
-      {/* Notes */}
       {prescription.notes && (
         <Card>
           <CardHeader>
@@ -335,7 +300,6 @@ export default function PrescriptionPage() {
         </Card>
       )}
 
-      {/* Injections History */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -344,83 +308,63 @@ export default function PrescriptionPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {injectionsLoading ? (
+          {injections && injections.length > 0 ? (
             <div className="space-y-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="rounded-lg border p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <Skeleton className="mb-2 h-5 w-20" />
-                      <Skeleton className="mb-1 h-4 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                    <div className="text-right">
-                      <Skeleton className="mb-1 h-4 w-20" />
-                      <Skeleton className="h-3 w-16" />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : injections && injections.length > 0 ? (
-            <div className="space-y-4">
-              {injections.map((injection) => (
-                <div
-                  key={injection.id}
-                  className="hover:bg-muted/50 rounded-lg border p-4"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-center gap-2">
-                        <Badge
-                          variant={
-                            injection.status === "APPLIED"
-                              ? "default"
+              {injections.map((injection) => {
+                return (
+                  <div
+                    key={injection.id}
+                    className="hover:bg-muted/50 rounded-lg border p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Badge
+                            variant={
+                              injection.status === "APPLIED"
+                                ? "default"
+                                : injection.status === "SCHEDULED"
+                                  ? "secondary"
+                                  : injection.status === "CANCELLED"
+                                    ? "destructive"
+                                    : "outline"
+                            }
+                          >
+                            {injection.status === "APPLIED"
+                              ? "Aplicada"
                               : injection.status === "SCHEDULED"
-                                ? "secondary"
+                                ? "Agendada"
                                 : injection.status === "CANCELLED"
-                                  ? "destructive"
-                                  : "outline"
-                          }
-                        >
-                          {injection.status === "APPLIED"
-                            ? "Aplicada"
-                            : injection.status === "SCHEDULED"
-                              ? "Agendada"
-                              : injection.status === "CANCELLED"
-                                ? "Cancelada"
-                                : "Reagendada"}
-                        </Badge>
-                      </div>
-                      <div className="text-muted-foreground text-sm">
-                        {injection.injectionOD} OD / {injection.injectionOS} OE
-                      </div>
-                      {injection.observations && (
-                        <div className="text-muted-foreground mt-1 text-xs">
-                          Obs: {injection.observations}
+                                  ? "Cancelada"
+                                  : "Reagendada"}
+                          </Badge>
                         </div>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium">
-                        Agendada:{" "}
-                        {injection.scheduledDate.toLocaleDateString("pt-BR")}
+                        <div className="text-muted-foreground text-sm">
+                          {injection.injectionOD} OD / {injection.injectionOS}{" "}
+                          OE
+                        </div>
                       </div>
-                      {injection.appliedAt && (
-                        <div className="text-muted-foreground text-xs">
-                          Aplicada:{" "}
-                          {injection.appliedAt.toLocaleDateString("pt-BR")}
+                      <div className="text-right">
+                        <div className="text-sm font-medium">
+                          Agendada:{" "}
+                          {injection.scheduledDate.toLocaleDateString("pt-BR")}
                         </div>
-                      )}
-                      {injection.appliedBy && (
-                        <div className="text-muted-foreground text-xs">
-                          Por: {injection.appliedBy.name}
-                        </div>
-                      )}
+                        {injection.appliedAt ? (
+                          <div className="text-muted-foreground text-xs">
+                            Aplicada:{" "}
+                            {injection.appliedAt.toLocaleDateString("pt-BR")}
+                          </div>
+                        ) : null}
+                        {injection.appliedBy ? (
+                          <div className="text-muted-foreground text-xs">
+                            Por: {injection.appliedBy.name}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-muted-foreground py-8 text-center">

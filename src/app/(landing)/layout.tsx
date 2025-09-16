@@ -1,9 +1,8 @@
-"use client";
-
 import {
   BarChart3,
   Bell,
   FileText,
+  LogIn,
   LogOut,
   Menu,
   Settings,
@@ -18,16 +17,65 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
+import { auth, signIn, signOut } from "~/server/auth";
 
+import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
-import Link from "next/link";
+import { db } from "~/server/db";
 
 interface LandingLayoutProps {
   children: React.ReactNode;
 }
 
-export default function LandingLayout({ children }: LandingLayoutProps) {
+export default async function LandingLayout({ children }: LandingLayoutProps) {
+  const session = await auth();
+  const isAuthenticated = !!session?.user;
+  const notificationsCount = isAuthenticated
+    ? await (async () => {
+        const now = new Date();
+        const startOfToday = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          0,
+          0,
+          0,
+          0,
+        );
+        const endOfToday = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          23,
+          59,
+          59,
+          999,
+        );
+
+        const [overdueScheduled, dueToday, missed] = await Promise.all([
+          db.injection.count({
+            where: {
+              status: "SCHEDULED",
+              scheduledDate: { lt: startOfToday },
+              patient: { isActive: true },
+            },
+          }),
+          db.injection.count({
+            where: {
+              status: "SCHEDULED",
+              scheduledDate: { gte: startOfToday, lte: endOfToday },
+              patient: { isActive: true },
+            },
+          }),
+          db.injection.count({
+            where: { status: "MISSED", patient: { isActive: true } },
+          }),
+        ]);
+
+        return overdueScheduled + dueToday + missed;
+      })()
+    : 0;
   return (
     <div className="bg-background min-h-screen">
       {/* Header */}
@@ -41,12 +89,12 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-foreground text-base font-bold sm:text-lg lg:text-xl">
-                  <span className="hidden sm:inline">Sistema de Injeções</span>
+                  <span className="hidden sm:inline">Injecções</span>
                   <span className="sm:hidden">Sistema</span>
                 </h1>
                 <p className="text-muted-foreground text-xs sm:text-sm">
                   <span className="hidden sm:inline">
-                    Gerenciamento Intravítreo
+                    Gerenciamento AntiVEGF
                   </span>
                   <span className="sm:hidden">Injeções</span>
                 </p>
@@ -84,47 +132,90 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
             {/* Ações do Usuário */}
             <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-4">
               {/* Notificações - Ocultar em telas muito pequenas */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative hidden h-8 w-8 sm:flex sm:h-9 sm:w-9 lg:h-10 lg:w-10"
-              >
-                <Bell className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-                <Badge
-                  variant="destructive"
-                  className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full p-0 text-xs sm:h-4 sm:w-4 lg:h-5 lg:w-5"
+              {isAuthenticated && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative hidden h-8 w-8 sm:flex sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                  asChild
+                  aria-label={`Notificações: ${notificationsCount}`}
                 >
-                  3
-                </Badge>
-              </Button>
+                  <Link href="/dashboard">
+                    <Bell className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                    {notificationsCount > 0 && (
+                      <Badge
+                        variant="destructive"
+                        className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full p-0 text-xs sm:h-4 sm:w-4 lg:h-5 lg:w-5"
+                      >
+                        {notificationsCount}
+                      </Badge>
+                    )}
+                  </Link>
+                </Button>
+              )}
 
               {/* Menu do Usuário - Simplificado em mobile */}
               <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
                 <div className="flex items-center space-x-1 sm:space-x-1.5 lg:space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10"
-                  >
-                    <User className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden h-8 w-8 sm:flex sm:h-9 sm:w-9 lg:h-10 lg:w-10"
-                  >
-                    <Settings className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10"
-                    asChild
-                  >
-                    <Link href="/api/auth/signout">
-                      <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
-                    </Link>
-                  </Button>
+                  {isAuthenticated ? (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hidden h-8 w-8 sm:flex sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                        asChild
+                      >
+                        <Link href="/settings">
+                          <Settings className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                        </Link>
+                      </Button>
+                      <form
+                        action={async () => {
+                          "use server";
+                          await signOut();
+                        }}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                          type="submit"
+                          aria-label="Sair"
+                        >
+                          <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                        </Button>
+                      </form>
+                    </>
+                  ) : (
+                    <>
+                      <form
+                        action={async () => {
+                          "use server";
+                          await signIn();
+                        }}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                          type="submit"
+                          aria-label="Entrar"
+                        >
+                          <LogIn className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                        </Button>
+                      </form>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hidden h-8 w-8 sm:flex sm:h-9 sm:w-9 lg:h-10 lg:w-10"
+                        asChild
+                      >
+                        <Link href="/settings">
+                          <Settings className="h-3.5 w-3.5 sm:h-4 sm:w-4 lg:h-5 lg:w-5" />
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -146,9 +237,7 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
                         <Syringe className="h-6 w-6" />
                       </div>
                       <div>
-                        <h2 className="text-lg font-bold">
-                          Sistema de Injeções
-                        </h2>
+                        <h2 className="text-lg font-bold">Injecções</h2>
                         <p className="text-muted-foreground text-sm">
                           Navegação
                         </p>
@@ -189,16 +278,39 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
 
                     <div className="border-t pt-4">
                       <div className="space-y-2">
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start"
-                          asChild
-                        >
-                          <Link href="/api/auth/signout">
-                            <LogOut className="mr-3 h-4 w-4" />
-                            Sair
-                          </Link>
-                        </Button>
+                        {isAuthenticated ? (
+                          <form
+                            action={async () => {
+                              "use server";
+                              await signOut();
+                            }}
+                          >
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start"
+                              type="submit"
+                            >
+                              <LogOut className="mr-3 h-4 w-4" />
+                              Sair
+                            </Button>
+                          </form>
+                        ) : (
+                          <form
+                            action={async () => {
+                              "use server";
+                              await signIn();
+                            }}
+                          >
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start"
+                              type="submit"
+                            >
+                              <User className="mr-3 h-4 w-4" />
+                              Entrar
+                            </Button>
+                          </form>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -221,7 +333,7 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Syringe className="text-primary h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
                 <span className="text-foreground text-sm font-bold sm:text-base lg:text-lg">
-                  Sistema de Injeções
+                  Injecções
                 </span>
               </div>
               <p className="text-muted-foreground text-xs leading-relaxed sm:text-sm">
@@ -270,7 +382,7 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
               </h3>
               <div className="space-y-2 sm:space-y-3">
                 <a
-                  href="https://antivegf.seoft.com.br/"
+                  href="https://https://injecoes.seoft.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
@@ -307,6 +419,20 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
                 <p className="text-muted-foreground text-xs sm:text-sm">
                   Sistema interno - Uso restrito
                 </p>
+                <div className="pt-2">
+                  <Link
+                    href="/termos"
+                    className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                  >
+                    Termos de Uso
+                  </Link>
+                  <Link
+                    href="/privacidade"
+                    className="text-muted-foreground hover:text-foreground block py-1 text-xs transition-colors sm:text-sm"
+                  >
+                    Política de Privacidade
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -314,8 +440,8 @@ export default function LandingLayout({ children }: LandingLayoutProps) {
           {/* Copyright */}
           <div className="mt-6 border-t pt-4 sm:mt-8">
             <p className="text-muted-foreground text-center text-xs sm:text-sm">
-              © {new Date().getFullYear()} Sistema de Injeções. Todos os
-              direitos reservados.
+              © {new Date().getFullYear()} Injecções. Todos os direitos
+              reservados.
             </p>
           </div>
 

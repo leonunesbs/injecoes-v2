@@ -2,13 +2,14 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+    provider   = "prisma-client-js"
+    accelerate = env("PRISMA_ACCELERATE_URL")
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_DATABASE_URL")
 }
 
 // ==============================================
@@ -48,6 +49,7 @@ model User {
     email         String?        @unique
     emailVerified DateTime?
     image         String?
+    isStaff       Boolean        @default(false)
     accounts      Account[]
     sessions      Session[]
     patients      Patient[]

@@ -35,6 +35,7 @@ type User = Prisma.UserGetPayload<{
     image: true;
     createdAt: true;
     updatedAt: true;
+    isStaff: true;
   };
 }>;
 

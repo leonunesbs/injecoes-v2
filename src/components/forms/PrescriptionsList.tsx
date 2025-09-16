@@ -349,9 +349,9 @@ function DataTableToolbar({
   };
 
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-4">
       {/* Search and Filter Row */}
-      <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <Input
           placeholder="Buscar por nome ou prontuário..."
           value={(table.getState().globalFilter as string) ?? ""}
@@ -383,41 +383,46 @@ function DataTableToolbar({
       </div>
 
       {/* Actions Row */}
-      <div className="flex items-center gap-2 sm:gap-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3 lg:gap-4">
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <div className="text-muted-foreground hidden text-sm md:block">
+          <div className="text-muted-foreground text-center text-sm sm:text-left md:block">
             <span className="hidden lg:inline">
               {table.getFilteredSelectedRowModel().rows.length} de{" "}
               {table.getFilteredRowModel().rows.length} linhas selecionadas
             </span>
-            <span className="lg:hidden">
+            <span className="hidden sm:inline lg:hidden">
               {table.getFilteredSelectedRowModel().rows.length} selecionadas
+            </span>
+            <span className="sm:hidden">
+              {table.getFilteredSelectedRowModel().rows.length} itens
             </span>
           </div>
         )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleDownloadCSV}
-          disabled={table.getFilteredSelectedRowModel().rows.length === 0}
-          className="h-9 px-3"
-        >
-          <Download className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Download CSV</span>
-          <span className="sm:hidden">CSV</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleGeneratePDF}
-          disabled={table.getFilteredSelectedRowModel().rows.length === 0}
-          className="h-9 px-3"
-        >
-          <FileText className="mr-2 h-4 w-4" />
-          <span className="hidden sm:inline">Gerar PDF</span>
-          <span className="sm:hidden">PDF</span>
-        </Button>
-        <DataTableViewOptions table={table} />
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end sm:gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleDownloadCSV}
+            disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+            className="h-9 flex-1 px-3 sm:flex-none"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">Download CSV</span>
+            <span className="sm:hidden">CSV</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleGeneratePDF}
+            disabled={table.getFilteredSelectedRowModel().rows.length === 0}
+            className="h-9 flex-1 px-3 sm:flex-none"
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">Gerar PDF</span>
+            <span className="sm:hidden">PDF</span>
+          </Button>
+          <DataTableViewOptions table={table} />
+        </div>
       </div>
 
       <AlertDialog
@@ -450,45 +455,43 @@ function DataTablePagination({
 }: {
   table: TanStackTable<Prescription>;
 }) {
+  const currentPage = table.getState().pagination.pageIndex + 1;
+  const totalPages = table.getPageCount();
+  const totalResults = table.getFilteredRowModel().rows.length;
+  const totalCoreResults = table.getCoreRowModel().rows.length;
+  const pageSize = table.getState().pagination.pageSize;
+
   return (
-    <div className="flex flex-col gap-4 px-2 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:space-x-6 lg:space-x-8">
-        <div className="flex items-center space-x-2">
-          <p className="text-muted-foreground hidden text-sm font-medium sm:block">
-            Linhas por página
-          </p>
-          <p className="text-muted-foreground text-sm font-medium sm:hidden">
-            Por página
+    <div className="flex flex-col gap-3 px-1 sm:gap-4 sm:px-2 md:flex-row md:items-center md:justify-between">
+      {/* Informações e controles de página */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:gap-6">
+        {/* Seletor de itens por página */}
+        <div className="flex items-center gap-2">
+          <p className="text-muted-foreground text-sm font-medium">
+            <span className="xs:inline hidden">Linhas por página</span>
+            <span className="xs:hidden">Por página</span>
           </p>
           <Select
-            value={
-              table.getState().pagination.pageSize ===
-              table.getFilteredRowModel().rows.length
-                ? "all"
-                : `${table.getState().pagination.pageSize}`
-            }
+            value={pageSize === totalResults ? "all" : `${pageSize}`}
             onValueChange={(value) => {
               if (value === "all") {
-                table.setPageSize(table.getFilteredRowModel().rows.length);
+                table.setPageSize(totalResults);
               } else {
                 table.setPageSize(Number(value));
               }
             }}
           >
-            <SelectTrigger className="h-8 w-[100px]">
+            <SelectTrigger className="h-8 w-[90px] sm:w-[100px]">
               <SelectValue
                 placeholder={
-                  table.getState().pagination.pageSize ===
-                  table.getFilteredRowModel().rows.length
-                    ? "Ver todos"
-                    : table.getState().pagination.pageSize.toString()
+                  pageSize === totalResults ? "Ver todos" : pageSize.toString()
                 }
               />
             </SelectTrigger>
             <SelectContent side="top">
-              {[15, 30, 50, 100].map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
+              {[10, 15, 25, 50, 100].map((size) => (
+                <SelectItem key={size} value={`${size}`}>
+                  {size}
                 </SelectItem>
               ))}
               <SelectItem key="all" value="all">
@@ -497,62 +500,83 @@ function DataTablePagination({
             </SelectContent>
           </Select>
         </div>
-        <div className="text-muted-foreground flex items-center justify-center text-sm font-medium">
-          <span className="hidden sm:inline">
-            Página {table.getState().pagination.pageIndex + 1} de{" "}
-            {table.getPageCount()}
-          </span>
-          <span className="sm:hidden">
-            {table.getState().pagination.pageIndex + 1}/{table.getPageCount()}
-          </span>
-        </div>
-        <div className="flex items-center space-x-2">
+
+        {/* Informação da página atual */}
+        <div className="flex items-center justify-center sm:justify-start">
           <p className="text-muted-foreground text-sm font-medium">
             <span className="hidden sm:inline">
-              {table.getFilteredRowModel().rows.length} de{" "}
-              {table.getCoreRowModel().rows.length} resultados
+              Página {currentPage} de {totalPages}
             </span>
             <span className="sm:hidden">
-              {table.getFilteredRowModel().rows.length} resultados
+              {currentPage}/{totalPages}
             </span>
           </p>
         </div>
+
+        {/* Contador de resultados */}
+        <div className="flex items-center justify-center sm:justify-start">
+          <p className="text-muted-foreground text-sm font-medium">
+            <span className="hidden md:inline">
+              {totalResults} de {totalCoreResults} resultados
+            </span>
+            <span className="hidden sm:inline md:hidden">
+              {totalResults} resultados
+            </span>
+            <span className="sm:hidden">{totalResults} itens</span>
+          </p>
+        </div>
       </div>
-      <div className="flex items-center justify-center space-x-2 sm:justify-end">
+
+      {/* Controles de navegação */}
+      <div className="flex items-center justify-center gap-1 sm:gap-2 md:justify-end">
+        {/* Botão primeira página - apenas desktop */}
         <Button
           variant="outline"
-          className="hidden h-8 w-8 p-0 lg:flex"
+          className="hidden h-8 w-8 p-0 xl:flex"
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
+          aria-label="Ir para primeira página"
         >
-          <span className="sr-only">Ir para primeira página</span>
           <ChevronFirst className="h-4 w-4" />
         </Button>
+
+        {/* Botão página anterior */}
         <Button
           variant="outline"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
+          aria-label="Ir para página anterior"
         >
-          <span className="sr-only">Ir para página anterior</span>
           <ChevronLeft className="h-4 w-4" />
         </Button>
+
+        {/* Indicador de página atual em telas pequenas */}
+        <div className="flex items-center justify-center px-3 sm:hidden">
+          <span className="text-foreground text-sm font-medium">
+            {currentPage}
+          </span>
+        </div>
+
+        {/* Botão próxima página */}
         <Button
           variant="outline"
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
+          aria-label="Ir para próxima página"
         >
-          <span className="sr-only">Ir para próxima página</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
+
+        {/* Botão última página - apenas desktop */}
         <Button
           variant="outline"
-          className="hidden h-8 w-8 p-0 lg:flex"
+          className="hidden h-8 w-8 p-0 xl:flex"
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
+          aria-label="Ir para última página"
         >
-          <span className="sr-only">Ir para última página</span>
           <ChevronLast className="h-4 w-4" />
         </Button>
       </div>
@@ -775,7 +799,7 @@ function PrescriptionsTable({ prescriptions }: PrescriptionsListProps) {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-center py-4 sm:justify-end">
+      <div className="flex items-center justify-center py-3 sm:justify-end sm:py-4">
         <DataTablePagination table={table} />
       </div>
     </div>
