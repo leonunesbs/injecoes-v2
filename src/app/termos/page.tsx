@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Termos de Uso",
-  description: "Termos de Uso do sistema Injecções — Gerenciamento AntiVEGF.",
+  description: "Termos de Uso do sistema Injeções — Gerenciamento AntiVEGF.",
   alternates: { canonical: "/termos" },
 };
 
@@ -11,8 +11,8 @@ export default function TermsPage() {
     <div className="container mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-12">
       <h1 className="mb-6 text-3xl font-bold">Termos de Uso</h1>
       <p className="text-muted-foreground mb-4">
-        Bem-vindo ao sistema Injecções. Ao utilizar esta aplicação, você
-        concorda com os seguintes termos e condições.
+        Bem-vindo ao sistema Injeções. Ao utilizar esta aplicação, você concorda
+        com os seguintes termos e condições.
       </p>
       <h2 className="mt-8 text-xl font-semibold">1. Uso Autorizado</h2>
       <p className="text-muted-foreground mt-2">

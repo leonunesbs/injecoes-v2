@@ -19,9 +19,9 @@ import {
 } from "~/components/ui/sheet";
 import { auth, signIn, signOut } from "~/server/auth";
 
-import Link from "next/link";
 import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
+import Link from "next/link";
 import { db } from "~/server/db";
 
 interface LandingLayoutProps {
@@ -89,7 +89,7 @@ export default async function LandingLayout({ children }: LandingLayoutProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="text-foreground text-base font-bold sm:text-lg lg:text-xl">
-                  <span className="hidden sm:inline">Injecções</span>
+                  <span className="hidden sm:inline">Injeções</span>
                   <span className="sm:hidden">Sistema</span>
                 </h1>
                 <p className="text-muted-foreground text-xs sm:text-sm">
@@ -237,7 +237,7 @@ export default async function LandingLayout({ children }: LandingLayoutProps) {
                         <Syringe className="h-6 w-6" />
                       </div>
                       <div>
-                        <h2 className="text-lg font-bold">Injecções</h2>
+                        <h2 className="text-lg font-bold">Injeções</h2>
                         <p className="text-muted-foreground text-sm">
                           Navegação
                         </p>
@@ -333,7 +333,7 @@ export default async function LandingLayout({ children }: LandingLayoutProps) {
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <Syringe className="text-primary h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
                 <span className="text-foreground text-sm font-bold sm:text-base lg:text-lg">
-                  Injecções
+                  Injeções
                 </span>
               </div>
               <p className="text-muted-foreground text-xs leading-relaxed sm:text-sm">
@@ -440,7 +440,7 @@ export default async function LandingLayout({ children }: LandingLayoutProps) {
           {/* Copyright */}
           <div className="mt-6 border-t pt-4 sm:mt-8">
             <p className="text-muted-foreground text-center text-xs sm:text-sm">
-              © {new Date().getFullYear()} Injecções. Todos os direitos
+              © {new Date().getFullYear()} Injeções. Todos os direitos
               reservados.
             </p>
           </div>

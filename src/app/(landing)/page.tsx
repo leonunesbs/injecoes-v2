@@ -15,27 +15,27 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-import type { Metadata } from "next";
-import Link from "next/link";
 import { Button } from "~/components/ui/button";
 import { HydrateClient } from "~/trpc/server";
+import Link from "next/link";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Início",
   description:
-    "Injecções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
+    "Injeções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
   alternates: { canonical: "/" },
   openGraph: {
     title: "Início",
     description:
-      "Injecções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
+      "Injeções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
     url: "/",
     type: "website",
   },
   twitter: {
     title: "Início",
     description:
-      "Injecções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
+      "Injeções — Gerenciamento AntiVEGF: acesse rapidamente prescrições, pacientes e relatórios.",
     card: "summary_large_image",
   },
 };

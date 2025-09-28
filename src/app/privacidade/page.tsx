@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Política de Privacidade",
   description:
-    "Política de Privacidade do sistema Injecções — Gerenciamento AntiVEGF.",
+    "Política de Privacidade do sistema Injeções — Gerenciamento AntiVEGF.",
   alternates: { canonical: "/privacidade" },
 };
 
@@ -12,8 +12,7 @@ export default function PrivacyPage() {
     <div className="container mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-12">
       <h1 className="mb-6 text-3xl font-bold">Política de Privacidade</h1>
       <p className="text-muted-foreground mb-4">
-        Esta Política descreve como tratamos dados pessoais no sistema
-        Injecções.
+        Esta Política descreve como tratamos dados pessoais no sistema Injeções.
       </p>
       <h2 className="mt-8 text-xl font-semibold">1. Dados Coletados</h2>
       <p className="text-muted-foreground mt-2">

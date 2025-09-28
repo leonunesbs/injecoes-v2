@@ -9,10 +9,10 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://injecoes.seoft.app"),
-  applicationName: "Injecções",
+  applicationName: "Injeções",
   title: {
-    default: "Injecções",
-    template: "%s | Injecções",
+    default: "Injeções",
+    template: "%s | Injeções",
   },
   description:
     "Gerenciamento AntiVEGF: prescrições e aplicações intravítreas com eficiência.",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     "bevacizumabe",
     "aflibercepte",
   ],
-  authors: [{ name: "Injecções" }],
-  creator: "Injecções",
-  publisher: "Injecções",
+  authors: [{ name: "Injeções" }],
+  creator: "Injeções",
+  publisher: "Injeções",
   generator: "Next.js",
   category: "Saúde",
   referrer: "origin-when-cross-origin",
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "/",
-    siteName: "Injecções — Gerenciamento AntiVEGF",
-    title: "Injecções",
+    siteName: "Injeções — Gerenciamento AntiVEGF",
+    title: "Injeções",
     description:
       "Gerenciamento AntiVEGF: prescrições e aplicações intravítreas com eficiência.",
     locale: "pt_BR",
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Injecções",
+    title: "Injeções",
     description:
       "Gerenciamento AntiVEGF: prescrições e aplicações intravítreas com eficiência.",
     images: ["/logo.jpg"],
